@@ -1,0 +1,17 @@
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+
+import { Playground } from "./playground";
+
+import "./index.css";
+
+const root = document.getElementById("root");
+if (root === null) {
+  throw new Error("Root element #root not found");
+}
+
+createRoot(root).render(
+  <StrictMode>
+    <Playground />
+  </StrictMode>
+);
