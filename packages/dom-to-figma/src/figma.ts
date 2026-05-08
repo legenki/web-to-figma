@@ -1,4 +1,8 @@
-import { getClipboardHtml, getClipboardItem } from "./clipboard";
+import {
+  composeClipboardHtml,
+  encodeFigmaData,
+  toClipboardItem,
+} from "@sleekdesign/fig-kiwi";
 import { BlobManager } from "./converter/blob-manager";
 import { createFontCache } from "./converter/font-cache";
 import { createImageCache } from "./converter/image-cache";
@@ -18,7 +22,6 @@ import type {
 } from "./converter/types";
 import type { Classify, WalkContext } from "./converter/walk";
 import { walkRoot } from "./converter/walk";
-import { encodeFigmaData } from "./encoder/encoder";
 
 export type { ElementKind } from "./converter/classify";
 export { defaultClassify } from "./converter/classify";
@@ -138,8 +141,9 @@ export function createFigmaConverter(
       document,
       bytes: encoded.figBytes,
       base64: encoded.base64,
-      toClipboardItem: () => getClipboardItem(encoded.base64),
-      toClipboardHtml: () => getClipboardHtml(encoded.base64),
+      toClipboardItem: () =>
+        toClipboardItem(composeClipboardHtml(encoded.base64)),
+      toClipboardHtml: () => composeClipboardHtml(encoded.base64),
     };
   };
 
