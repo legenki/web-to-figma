@@ -1,0 +1,24 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+<style>
+  body { margin: 0; padding: 32px; background: #ffffff; font-family: Inter, sans-serif; color: #18181b; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 720px; }
+  .swatch { aspect-ratio: 1; border-radius: 12px; display: flex; flex-direction: column; justify-content: flex-end; padding: 12px; color: white; font-size: 12px; font-weight: 600; }
+  .a { background: #18181b; }
+  .b { background: rgb(249, 115, 22); }
+  .c { background: rgba(37, 99, 235, 0.8); }
+  .d { background: hsl(160, 84%, 39%); }
+  .e { background: oklch(0.7 0.18 30); }
+  .f { background: hotpink; }
+  .g { background: rgba(0, 0, 0, 0.5); }
+  .h { background: transparent; border: 2px dashed #d4d4d8; color: #71717a; }
+</style>
+<div class="grid">
+  <div class="swatch a">#18181b</div>
+  <div class="swatch b">rgb()</div>
+  <div class="swatch c">rgba()</div>
+  <div class="swatch d">hsl()</div>
+  <div class="swatch e">oklch()</div>
+  <div class="swatch f">named</div>
+  <div class="swatch g">50% alpha</div>
+  <div class="swatch h">transparent</div>
+</div>

@@ -1,0 +1,34 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+<style>
+  body { margin: 0; padding: 32px; background: #ffffff; font-family: Inter, sans-serif; color: #18181b; }
+  .stack { display: flex; flex-direction: column; gap: 24px; max-width: 600px; }
+  .row { font-size: 16px; }
+  .label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #71717a; margin-bottom: 6px; }
+  .tight   { line-height: 1.0; }
+  .normal  { line-height: 1.4; }
+  .loose   { line-height: 2.0; }
+  .tracked { letter-spacing: 0.1em; }
+  .compact { letter-spacing: -0.03em; }
+</style>
+<div class="stack">
+  <div class="row">
+    <span class="label">line-height 1.0</span>
+    <div class="tight">A two-line passage to show what a tight line-height looks like when the rows almost touch.</div>
+  </div>
+  <div class="row">
+    <span class="label">line-height 1.4</span>
+    <div class="normal">A two-line passage at a comfortable reading line-height.</div>
+  </div>
+  <div class="row">
+    <span class="label">line-height 2.0</span>
+    <div class="loose">A two-line passage with a very open line-height.</div>
+  </div>
+  <div class="row">
+    <span class="label">letter-spacing 0.1em</span>
+    <div class="tracked">TRACKED HEADLINE</div>
+  </div>
+  <div class="row">
+    <span class="label">letter-spacing -0.03em</span>
+    <div class="compact">A compact display heading</div>
+  </div>
+</div>

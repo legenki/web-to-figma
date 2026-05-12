@@ -1,0 +1,29 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+<style>
+  body { margin: 0; padding: 32px; background: #ffffff; font-family: Inter, sans-serif; color: #18181b; }
+  .row { display: flex; flex-direction: column; gap: 16px; max-width: 560px; }
+  .item { display: flex; align-items: center; gap: 16px; font-size: 13px; color: #52525b; }
+  svg { width: 240px; height: 32px; }
+</style>
+<div class="row">
+  <div class="item">
+    <svg viewBox="0 0 240 32"><path d="M4 16 H236" stroke="#18181b" stroke-width="2" fill="none"/></svg>
+    <span>solid 2px</span>
+  </div>
+  <div class="item">
+    <svg viewBox="0 0 240 32"><path d="M4 16 H236" stroke="#18181b" stroke-width="2" stroke-dasharray="6 6" fill="none"/></svg>
+    <span>dashed</span>
+  </div>
+  <div class="item">
+    <svg viewBox="0 0 240 32"><path d="M4 16 H236" stroke="#18181b" stroke-width="3" stroke-dasharray="2 6" stroke-linecap="round" fill="none"/></svg>
+    <span>dotted (round caps)</span>
+  </div>
+  <div class="item">
+    <svg viewBox="0 0 240 32"><path d="M4 16 H236" stroke="#f97316" stroke-width="6" stroke-linecap="round" fill="none"/></svg>
+    <span>thick round cap</span>
+  </div>
+  <div class="item">
+    <svg viewBox="0 0 240 32"><polyline points="4,28 60,8 120,24 180,4 236,28" stroke="#2563eb" stroke-width="2" stroke-linejoin="round" fill="none"/></svg>
+    <span>polyline (round joins)</span>
+  </div>
+</div>

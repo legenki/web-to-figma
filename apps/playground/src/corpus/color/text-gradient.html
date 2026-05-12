@@ -1,0 +1,21 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@600;800&display=swap">
+<style>
+  body { margin: 0; padding: 48px; background: #0a0a0a; font-family: Inter, sans-serif; color: white; }
+  .stack { display: flex; flex-direction: column; gap: 24px; max-width: 720px; }
+  .display {
+    font-size: 64px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    background: linear-gradient(135deg, #fb923c 0%, #db2777 50%, #6366f1 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin: 0;
+  }
+  .sub { font-size: 18px; color: #a1a1aa; font-weight: 400; }
+</style>
+<div class="stack">
+  <h1 class="display">Gradient headlines render as solid text plus a clipped fill.</h1>
+  <p class="sub">The text below the headline keeps its own solid color — the gradient is scoped to the heading element.</p>
+</div>

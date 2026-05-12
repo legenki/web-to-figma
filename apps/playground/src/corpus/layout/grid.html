@@ -1,0 +1,31 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+<style>
+  body { margin: 0; padding: 32px; background: #ffffff; font-family: Inter, sans-serif; color: #18181b; }
+  .stack { display: flex; flex-direction: column; gap: 24px; max-width: 720px; }
+  .label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #71717a; margin-bottom: 8px; }
+  .tile { background: #18181b; color: white; padding: 18px; border-radius: 8px; font-size: 13px; font-weight: 600; }
+  .three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .sidebar { display: grid; grid-template-columns: 200px 1fr; gap: 16px; }
+  .masonry { display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 60px 60px; gap: 12px; }
+  .masonry .wide { grid-column: span 2; background: #f97316; }
+  .masonry .tall { grid-row: span 2; background: #2563eb; }
+</style>
+<div class="stack">
+  <div>
+    <span class="label">Three equal columns</span>
+    <div class="three"><div class="tile">A</div><div class="tile">B</div><div class="tile">C</div></div>
+  </div>
+  <div>
+    <span class="label">Fixed sidebar + fluid main</span>
+    <div class="sidebar"><div class="tile">Sidebar</div><div class="tile">Main content</div></div>
+  </div>
+  <div>
+    <span class="label">Span column / span row</span>
+    <div class="masonry">
+      <div class="tile wide">wide (col span 2)</div>
+      <div class="tile tall">tall (row span 2)</div>
+      <div class="tile">three</div>
+      <div class="tile">four</div>
+    </div>
+  </div>
+</div>

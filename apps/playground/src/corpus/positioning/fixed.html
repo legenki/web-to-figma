@@ -1,0 +1,27 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+<style>
+  body { margin: 0; padding: 0; background: #ffffff; font-family: Inter, sans-serif; color: #18181b; min-height: 100vh; }
+  .top {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 56px; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px);
+    border-bottom: 1px solid #e4e4e7;
+    display: flex; align-items: center; padding: 0 24px;
+    font-weight: 600;
+  }
+  .bottom {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    height: 64px; background: #18181b; color: white;
+    display: flex; align-items: center; justify-content: space-around;
+    font-size: 13px;
+  }
+  .content { padding: 96px 24px 96px; max-width: 720px; }
+  .content h1 { margin: 0 0 12px; font-size: 32px; }
+  .content p { margin: 0 0 16px; line-height: 1.6; color: #52525b; }
+</style>
+<div class="top">Top navigation (fixed top)</div>
+<div class="content">
+  <h1>Fixed elements anchor to the parent frame edges</h1>
+  <p>The top bar should sit flush against the top edge of the converted frame and the bottom bar should sit flush against the bottom edge.</p>
+  <p>If anything is offset by tens or hundreds of pixels, the position:fixed handling regressed.</p>
+</div>
+<div class="bottom">Bottom navigation (fixed bottom)</div>

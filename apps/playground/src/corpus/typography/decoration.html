@@ -1,0 +1,21 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+<style>
+  body { margin: 0; padding: 32px; background: #ffffff; font-family: Inter, sans-serif; color: #18181b; }
+  .stack { display: flex; flex-direction: column; gap: 12px; max-width: 560px; font-size: 16px; line-height: 1.5; }
+  .row { display: grid; grid-template-columns: 140px 1fr; gap: 16px; align-items: baseline; }
+  .label { font-size: 12px; font-weight: 600; color: #71717a; text-transform: uppercase; letter-spacing: 0.08em; }
+  .u { text-decoration: underline; }
+  .lt { text-decoration: line-through; }
+  .both { text-decoration: underline line-through; }
+  .upper { text-transform: uppercase; letter-spacing: 0.05em; }
+  .lower { text-transform: lowercase; }
+  .title { text-transform: capitalize; }
+</style>
+<div class="stack">
+  <div class="row"><span class="label">Underline</span><span class="u">A passage to underline.</span></div>
+  <div class="row"><span class="label">Line-through</span><span class="lt">A passage to strike through.</span></div>
+  <div class="row"><span class="label">Both</span><span class="both">Underline and strike together.</span></div>
+  <div class="row"><span class="label">Uppercase</span><span class="upper">make it loud</span></div>
+  <div class="row"><span class="label">Lowercase</span><span class="lower">QUIET DOWN</span></div>
+  <div class="row"><span class="label">Capitalize</span><span class="title">title case example here</span></div>
+</div>

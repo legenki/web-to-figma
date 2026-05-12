@@ -1,0 +1,24 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+<style>
+  body { margin: 0; padding: 48px; background: #fafafa; font-family: Inter, sans-serif; color: #18181b; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 720px; }
+  .tile {
+    aspect-ratio: 4/3; background: white; border-radius: 12px;
+    display: flex; align-items: flex-end; padding: 14px;
+    font-size: 12px; font-weight: 600; color: #52525b;
+  }
+  .small { box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.1); }
+  .medium { box-shadow: 0 4px 6px rgba(0,0,0,0.04), 0 10px 20px rgba(0,0,0,0.1); }
+  .large { box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+  .colored { box-shadow: 0 12px 30px rgba(249, 115, 22, 0.45); background: #fff7ed; color: #c2410c; }
+  .inner { box-shadow: inset 0 2px 4px rgba(0,0,0,0.12); background: #f4f4f5; }
+  .multi { box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35), 0 0 0 3px rgba(37, 99, 235, 0.2); background: #eff6ff; color: #1d4ed8; }
+</style>
+<div class="grid">
+  <div class="tile small">small</div>
+  <div class="tile medium">medium</div>
+  <div class="tile large">large</div>
+  <div class="tile colored">colored</div>
+  <div class="tile inner">inset</div>
+  <div class="tile multi">multi-shadow</div>
+</div>

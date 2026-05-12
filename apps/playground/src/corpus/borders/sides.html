@@ -1,0 +1,24 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+<style>
+  body { margin: 0; padding: 32px; background: #fafafa; font-family: Inter, sans-serif; color: #18181b; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 720px; }
+  .tile {
+    aspect-ratio: 4/3; background: white; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600;
+  }
+  .a { border: 1px solid #d4d4d8; }
+  .b { border: 3px solid #18181b; }
+  .c { border: 2px dashed #f97316; }
+  .d { border-top: 4px solid #2563eb; border-left: 1px solid #d4d4d8; border-right: 1px solid #d4d4d8; border-bottom: 1px solid #d4d4d8; }
+  .e { border-bottom: 4px solid #10b981; }
+  .f { border: 1px dotted #71717a; }
+</style>
+<div class="grid">
+  <div class="tile a">1px solid</div>
+  <div class="tile b">3px solid</div>
+  <div class="tile c">dashed</div>
+  <div class="tile d">accented top</div>
+  <div class="tile e">accented bottom</div>
+  <div class="tile f">dotted</div>
+</div>

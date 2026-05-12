@@ -1,0 +1,78 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+  body { margin: 0; font-family: Inter, sans-serif; color: #18181b; background: #ffffff; }
+  .nav { position: sticky; top: 0; display: flex; align-items: center; padding: 16px 32px; gap: 32px; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid #e4e4e7; }
+  .brand { font-weight: 800; letter-spacing: -0.02em; font-size: 18px; }
+  .nav-links { display: flex; gap: 24px; font-size: 14px; color: #52525b; }
+  .nav-links a { color: inherit; text-decoration: none; }
+  .nav-cta { margin-left: auto; padding: 8px 14px; background: #18181b; color: white; border-radius: 6px; font-size: 13px; font-weight: 500; text-decoration: none; }
+
+  .hero { padding: 96px 32px; text-align: center; background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 100%); }
+  .hero .pill { display: inline-block; padding: 4px 12px; background: #fff7ed; color: #c2410c; border-radius: 9999px; font-size: 12px; font-weight: 600; margin-bottom: 16px; }
+  .hero h1 { font-size: 64px; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 16px; max-width: 720px; margin-left: auto; margin-right: auto; line-height: 1.05; }
+  .hero h1 .accent {
+    background: linear-gradient(135deg, #f97316, #db2777);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero p { font-size: 18px; color: #52525b; margin: 0 auto 32px; max-width: 560px; line-height: 1.6; }
+  .hero .row { display: flex; gap: 12px; justify-content: center; }
+  .hero .primary { padding: 12px 20px; background: #18181b; color: white; border-radius: 8px; font-weight: 500; text-decoration: none; }
+  .hero .secondary { padding: 12px 20px; background: white; color: #18181b; border: 1px solid #d4d4d8; border-radius: 8px; font-weight: 500; text-decoration: none; }
+
+  .features { padding: 80px 32px; max-width: 1080px; margin: 0 auto; }
+  .features h2 { font-size: 32px; font-weight: 700; margin: 0 0 32px; text-align: center; }
+  .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .feature { background: white; padding: 24px; border: 1px solid #e4e4e7; border-radius: 12px; }
+  .feature .icon { width: 36px; height: 36px; border-radius: 8px; background: #fff7ed; color: #c2410c; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+  .feature h3 { margin: 0 0 6px; font-size: 16px; font-weight: 600; }
+  .feature p { margin: 0; color: #71717a; font-size: 14px; line-height: 1.6; }
+
+  .footer { padding: 32px; text-align: center; color: #a1a1aa; font-size: 13px; border-top: 1px solid #e4e4e7; }
+</style>
+<nav class="nav">
+  <span class="brand">Sleek</span>
+  <div class="nav-links">
+    <a href="#">Product</a>
+    <a href="#">Pricing</a>
+    <a href="#">Docs</a>
+  </div>
+  <a href="#" class="nav-cta">Get started</a>
+</nav>
+<section class="hero">
+  <span class="pill">v1 — out now</span>
+  <h1>Move designs from <span class="accent">browser to Figma</span> in one paste.</h1>
+  <p>Author your interface in HTML and CSS, then copy a clipboard payload that pastes as editable Figma layers — no plugin, no export step.</p>
+  <div class="row">
+    <a href="#" class="primary">Try the playground</a>
+    <a href="#" class="secondary">Read the docs</a>
+  </div>
+</section>
+<section class="features">
+  <h2>Built for real designs</h2>
+  <div class="feature-grid">
+    <div class="feature">
+      <div class="icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l3 3 5-5 4 4 6-7"/></svg>
+      </div>
+      <h3>Editable text</h3>
+      <p>Text nodes ship with real glyphs and metrics — fully editable on paste, no flattening.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+      </div>
+      <h3>Vectors preserved</h3>
+      <p>Inline SVG icons round-trip as vector networks — strokes, dashes, and compound paths intact.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v6H4zM4 14h16v6H4z"/></svg>
+      </div>
+      <h3>Real layout</h3>
+      <p>Padding, gaps, shadows, gradients, and per-corner radii all translate to native Figma properties.</p>
+    </div>
+  </div>
+</section>
+<footer class="footer">© Sleek Design</footer>

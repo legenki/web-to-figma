@@ -1,0 +1,20 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+<style>
+  body { margin: 0; padding: 32px; background: #ffffff; font-family: Inter, sans-serif; color: white; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 720px; }
+  .swatch { aspect-ratio: 4/3; border-radius: 12px; display: flex; align-items: flex-end; padding: 12px; font-size: 12px; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+  .a { background: linear-gradient(to right, #f97316, #db2777); }
+  .b { background: linear-gradient(135deg, #2563eb, #10b981); }
+  .c { background: linear-gradient(180deg, #18181b, transparent); }
+  .d { background: linear-gradient(90deg, #fafafa 0%, #f97316 50%, #18181b 100%); color: #18181b; }
+  .e { background: linear-gradient(45deg, oklch(0.7 0.2 30), oklch(0.65 0.2 280)); }
+  .f { background: linear-gradient(to bottom right, #ef4444, #f59e0b, #84cc16, #06b6d4, #8b5cf6); }
+</style>
+<div class="grid">
+  <div class="swatch a">to right, two stops</div>
+  <div class="swatch b">135°</div>
+  <div class="swatch c">solid → transparent</div>
+  <div class="swatch d">three explicit stops</div>
+  <div class="swatch e">oklch stops</div>
+  <div class="swatch f">five-stop rainbow</div>
+</div>

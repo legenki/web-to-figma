@@ -1,0 +1,28 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+<style>
+  body { margin: 0; padding: 32px; background: #ffffff; font-family: Inter, sans-serif; color: white; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 720px; }
+  .tile {
+    aspect-ratio: 1; background: #18181b;
+    display: flex; align-items: flex-end; padding: 10px;
+    font-size: 11px; font-weight: 600;
+  }
+  .a { border-radius: 0; }
+  .b { border-radius: 8px; }
+  .c { border-radius: 24px; }
+  .d { border-radius: 9999px; }
+  .e { border-radius: 24px 0 24px 0; }
+  .f { border-radius: 50% / 25%; }
+  .g { border-radius: 8px 8px 32px 32px; background: #f97316; }
+  .h { border-radius: 32px; corner-shape: squircle; background: #2563eb; }
+</style>
+<div class="grid">
+  <div class="tile a">none</div>
+  <div class="tile b">8px</div>
+  <div class="tile c">24px</div>
+  <div class="tile d">pill</div>
+  <div class="tile e">2 corners</div>
+  <div class="tile f">ellipse</div>
+  <div class="tile g">asymmetric</div>
+  <div class="tile h">squircle</div>
+</div>

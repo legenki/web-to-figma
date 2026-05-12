@@ -1,0 +1,46 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+<style>
+  body { margin: 0; padding: 32px; background: #ffffff; font-family: Inter, sans-serif; color: #18181b; }
+  .row { display: flex; flex-wrap: wrap; gap: 24px; align-items: center; }
+  .item { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 12px; color: #71717a; }
+  svg { width: 32px; height: 32px; }
+  .accent { color: #f97316; }
+</style>
+<div class="row">
+  <div class="item">
+    <!-- outline icon: stroke only -->
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 12l2 2 4-4 5 5 7-7"/>
+    </svg>
+    <span>stroke only</span>
+  </div>
+  <div class="item">
+    <!-- compound path: solid ring -->
+    <svg viewBox="0 0 24 24" class="accent">
+      <path fill="currentColor" fill-rule="evenodd" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 4a6 6 0 1 1 0 12 6 6 0 0 1 0-12Z"/>
+    </svg>
+    <span>compound path</span>
+  </div>
+  <div class="item">
+    <!-- evenodd donut -->
+    <svg viewBox="0 0 24 24">
+      <path fill="#2563eb" fill-rule="evenodd" d="M2 12a10 10 0 1 0 20 0 10 10 0 0 0-20 0Zm5 0a5 5 0 1 1 10 0 5 5 0 0 1-10 0Z"/>
+    </svg>
+    <span>evenodd ring</span>
+  </div>
+  <div class="item">
+    <!-- circle + rect combined -->
+    <svg viewBox="0 0 24 24">
+      <circle cx="8" cy="12" r="6" fill="#10b981"/>
+      <rect x="12" y="6" width="10" height="12" rx="2" fill="#18181b"/>
+    </svg>
+    <span>shape primitives</span>
+  </div>
+  <div class="item">
+    <!-- mixed fill + stroke -->
+    <svg viewBox="0 0 24 24">
+      <path fill="#fef3c7" stroke="#b45309" stroke-width="1.5" d="M12 2 2 22h20L12 2Z"/>
+    </svg>
+    <span>fill + stroke</span>
+  </div>
+</div>

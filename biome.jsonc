@@ -6,7 +6,9 @@
       "!**/dist",
       "!**/node_modules",
       "!**/coverage",
-      "!**/.changeset"
+      "!**/.changeset",
+      "!**/playground/src/corpus",
+      "!**/playground/src/routeTree.gen.ts"
     ]
   },
   "linter": {
@@ -55,6 +57,16 @@
       "json": {
         "parser": {
           "allowComments": true
+        }
+      }
+    },
+    {
+      "includes": ["**/playground/src/routes/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useFilenamingConvention": "off"
+          }
         }
       }
     }

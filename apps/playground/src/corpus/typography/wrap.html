@@ -1,0 +1,31 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+<style>
+  body { margin: 0; padding: 32px; background: #ffffff; font-family: Inter, sans-serif; color: #18181b; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 720px; }
+  .panel { background: #fafafa; border: 1px solid #e4e4e7; border-radius: 12px; padding: 20px; }
+  .label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #71717a; margin-bottom: 8px; }
+  .narrow { width: 180px; font-size: 14px; line-height: 1.5; }
+  .nowrap { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 200px; font-size: 14px; }
+  .pre { white-space: pre; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+  .break { word-break: break-word; width: 120px; font-size: 14px; line-height: 1.4; }
+</style>
+<div class="grid">
+  <div class="panel">
+    <span class="label">Soft wrap</span>
+    <p class="narrow">The browser breaks at word boundaries inside a constrained container.</p>
+  </div>
+  <div class="panel">
+    <span class="label">Nowrap + ellipsis</span>
+    <p class="nowrap">A very long line that should be truncated with an ellipsis at the end.</p>
+  </div>
+  <div class="panel">
+    <span class="label">Preserve whitespace</span>
+    <p class="pre">line one
+line two
+    indented</p>
+  </div>
+  <div class="panel">
+    <span class="label">Break long word</span>
+    <p class="break">supercalifragilisticexpialidocious</p>
+  </div>
+</div>

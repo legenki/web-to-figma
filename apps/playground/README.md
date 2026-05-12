@@ -1,27 +1,47 @@
 # playground
 
-Interactive sandbox for `@sleekdesign/dom-to-figma`. Edit HTML on the left, see it rendered on the right, click "Copy to Figma", paste in Figma.
+Interactive sandbox for `@sleekdesign/dom-to-figma`. Browse a corpus of unit and integration scenes, edit the HTML, watch the iframe preview update, inspect the Figma payload tree, and copy to Figma in one click.
 
-Used during development of `dom-to-figma` and as a lightweight smoke-testing harness.
+## Stack
+
+- [TanStack Start](https://tanstack.com/start) in SPA mode (Vite, React 19)
+- [TanStack Router](https://tanstack.com/router) for file-based routes
+- [Tailwind CSS v4](https://tailwindcss.com)
+- CodeMirror 6 for the HTML editor
 
 ## Run
 
-The playground consumes the built output of `@sleekdesign/dom-to-figma`, so build the package first (or run it in watch mode in a second terminal).
-
 ```sh
-# from repo root, one-time build of the package
-pnpm --filter @sleekdesign/dom-to-figma build
-
-# then start the playground
+# from repo root
 pnpm --filter playground dev
 ```
 
-For active development on the package itself:
+The playground consumes `@sleekdesign/dom-to-figma` from source via the workspace, so no separate build step is needed.
 
-```sh
-# terminal 1 — rebuild dom-to-figma on every change
-pnpm --filter @sleekdesign/dom-to-figma dev
+## Layout
 
-# terminal 2 — playground with HMR
-pnpm --filter playground dev
 ```
+src/
+├── routes/
+│   ├── __root.tsx          # html shell, global header
+│   ├── index.tsx           # scene gallery (grouped by category)
+│   └── scenes.$.tsx        # one scene: editor + preview + inspector
+├── corpus/                 # *.html scenes, one file per concern
+│   ├── typography/
+│   ├── color/
+│   ├── layout/
+│   ├── positioning/
+│   ├── borders/
+│   ├── effects/
+│   ├── svg/
+│   ├── forms/
+│   └── integrations/
+├── components/
+│   ├── playground-shell.tsx  # editor + iframe + copy + status
+│   └── payload-inspector.tsx # tree view of nodeChanges
+└── lib/converter.ts          # singleton FigmaConverter (caches fonts/images)
+```
+
+## Adding a scene
+
+Drop a new `.html` file under the right category directory. The filename (kebab-case) becomes the slug; the title is derived from the filename. No registry edits needed.

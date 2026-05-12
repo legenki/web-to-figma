@@ -1,0 +1,20 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+<style>
+  body { margin: 0; padding: 48px; background: #fafafa; font-family: Inter, sans-serif; color: white; }
+  .stage { position: relative; width: 480px; height: 280px; }
+  .box {
+    position: absolute; width: 160px; height: 120px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  }
+  .a { top: 0;   left: 0;   background: #f97316; z-index: 1; }
+  .b { top: 40px; left: 80px; background: #2563eb; z-index: 3; }
+  .c { top: 80px; left: 160px; background: #10b981; z-index: 2; }
+  .d { top: 120px; left: 240px; background: #18181b; z-index: 4; }
+</style>
+<div class="stage">
+  <div class="box a">z: 1</div>
+  <div class="box b">z: 3</div>
+  <div class="box c">z: 2</div>
+  <div class="box d">z: 4</div>
+</div>

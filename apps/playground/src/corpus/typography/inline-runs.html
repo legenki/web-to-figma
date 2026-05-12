@@ -1,0 +1,16 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap">
+<style>
+  body { margin: 0; padding: 32px; background: #ffffff; font-family: Inter, sans-serif; color: #18181b; }
+  .stack { display: flex; flex-direction: column; gap: 16px; max-width: 560px; font-size: 16px; line-height: 1.6; }
+  .accent { color: #f97316; font-weight: 700; }
+  .muted { color: #71717a; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; background: #f4f4f5; padding: 1px 6px; border-radius: 4px; font-size: 14px; }
+  .link { color: #2563eb; text-decoration: underline; }
+  .strong { font-weight: 700; }
+  .em { font-style: italic; color: #3f3f46; }
+</style>
+<div class="stack">
+  <p>A paragraph with <span class="accent">an accented phrase</span>, a <span class="link">link</span>, and some <span class="mono">code</span> in the middle of a single line.</p>
+  <p>Nested <span class="strong">bold</span>, <span class="em">italic</span>, and <span class="muted">muted</span> runs share one baseline.</p>
+  <p>Watch what happens when an inline run wraps across <span class="accent">multiple lines because the container is narrow enough to force a break mid-span</span>.</p>
+</div>
