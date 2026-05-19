@@ -7,7 +7,7 @@ import type {
   FigmaGuid,
 } from "../../types";
 
-const DEFAULT_FRAME_NAME = "Sleek Design";
+const DEFAULT_FRAME_NAME = "Figit";
 
 function getGuid(id: number): FigmaGuid {
   return {

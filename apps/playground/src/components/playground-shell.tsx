@@ -1,8 +1,8 @@
 import { html } from "@codemirror/lang-html";
-import type { ConvertResult } from "@sleekdesign/dom-to-figma";
-import { Button } from "@sleekdesign/ui/components/button";
-import { Input } from "@sleekdesign/ui/components/input";
-import { Spinner } from "@sleekdesign/ui/components/spinner";
+import type { ConvertResult } from "@figit/dom-to-figma";
+import { Button } from "@figit/ui/components/button";
+import { Input } from "@figit/ui/components/input";
+import { Spinner } from "@figit/ui/components/spinner";
 import CodeMirror from "@uiw/react-codemirror";
 import {
   useCallback,

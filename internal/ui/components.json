@@ -13,11 +13,11 @@
   "iconLibrary": "lucide",
   "rtl": false,
   "aliases": {
-    "components": "@sleekdesign/ui/components",
-    "utils": "@sleekdesign/ui/lib/utils",
-    "ui": "@sleekdesign/ui/components",
-    "lib": "@sleekdesign/ui/lib",
-    "hooks": "@sleekdesign/ui/hooks"
+    "components": "@figit/ui/components",
+    "utils": "@figit/ui/lib/utils",
+    "ui": "@figit/ui/components",
+    "lib": "@figit/ui/lib",
+    "hooks": "@figit/ui/hooks"
   },
   "menuColor": "default",
   "menuAccent": "subtle",

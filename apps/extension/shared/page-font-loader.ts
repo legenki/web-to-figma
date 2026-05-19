@@ -1,4 +1,4 @@
-import type { FontLoader, FontProperties } from "@sleekdesign/dom-to-figma";
+import type { FontLoader, FontProperties } from "@figit/dom-to-figma";
 
 /**
  * Wraps a `FontLoader` with a page-aware first try: when dom-to-figma asks

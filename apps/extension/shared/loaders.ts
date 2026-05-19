@@ -1,5 +1,5 @@
-import type { ImageLoader } from "@sleekdesign/dom-to-figma";
-import { createDirectImageLoader } from "@sleekdesign/dom-to-figma";
+import type { ImageLoader } from "@figit/dom-to-figma";
+import { createDirectImageLoader } from "@figit/dom-to-figma";
 
 import { base64ToArrayBuffer } from "./base64";
 import { sendMessage } from "./messaging";

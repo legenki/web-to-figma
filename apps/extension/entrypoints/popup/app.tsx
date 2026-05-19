@@ -1,5 +1,5 @@
+import { Button } from "@figit/ui/components/button";
 import { MonitorIcon, MoonIcon, SunIcon } from "@phosphor-icons/react";
-import { Button } from "@sleekdesign/ui/components/button";
 import type { ComponentType } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { browser } from "#imports";

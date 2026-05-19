@@ -44,15 +44,15 @@ importers:
 
   apps/extension:
     dependencies:
+      '@figit/dom-to-figma':
+        specifier: workspace:*
+        version: link:../../packages/dom-to-figma
+      '@figit/ui':
+        specifier: workspace:*
+        version: link:../../internal/ui
       '@phosphor-icons/react':
         specifier: 2.1.10
         version: 2.1.10(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
-      '@sleekdesign/dom-to-figma':
-        specifier: workspace:*
-        version: link:../../packages/dom-to-figma
-      '@sleekdesign/ui':
-        specifier: workspace:*
-        version: link:../../internal/ui
       '@webext-core/messaging':
         specifier: ^2.3.0
         version: 2.3.0
@@ -96,10 +96,10 @@ importers:
       '@codemirror/lang-html':
         specifier: ^6.4.10
         version: 6.4.11
-      '@sleekdesign/dom-to-figma':
+      '@figit/dom-to-figma':
         specifier: workspace:*
         version: link:../../packages/dom-to-figma
-      '@sleekdesign/ui':
+      '@figit/ui':
         specifier: workspace:*
         version: link:../../internal/ui
       '@tanstack/react-router':
@@ -194,7 +194,7 @@ importers:
 
   packages/dom-to-figma:
     dependencies:
-      '@sleekdesign/fig-kiwi':
+      '@figit/fig-kiwi':
         specifier: workspace:*
         version: link:../fig-kiwi
       colorjs.io:

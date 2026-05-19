@@ -5,7 +5,7 @@ Thanks for your interest in contributing.
 ## Setup
 
 ```sh
-git clone git@github.com:sleekdotdesign/figma.git
+git clone git@github.com:figitdesign/web-to-figma.git
 cd figma
 pnpm install
 ```

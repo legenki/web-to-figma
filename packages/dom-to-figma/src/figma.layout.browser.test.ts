@@ -120,7 +120,7 @@ describe("layout assertions for nested frames", () => {
           "type": "DOCUMENT",
         },
         {
-          "name": "Sleek Design",
+          "name": "Figit",
           "parentLocalID": 0,
           "position": {
             "x": 0,
@@ -130,7 +130,7 @@ describe("layout assertions for nested frames", () => {
           "type": "CANVAS",
         },
         {
-          "name": "Sleek Design",
+          "name": "Figit",
           "parentLocalID": 1,
           "position": {
             "x": 0,

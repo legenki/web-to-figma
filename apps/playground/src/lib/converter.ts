@@ -1,4 +1,4 @@
-import { createFigmaConverter } from "@sleekdesign/dom-to-figma";
+import { createFigmaConverter } from "@figit/dom-to-figma";
 
 // One converter instance per page so the in-memory font/image caches stay warm
 // across re-runs while the user iterates on a scene.
@@ -11,4 +11,4 @@ export function getConverter() {
   return cached;
 }
 
-export type { ConvertResult } from "@sleekdesign/dom-to-figma";
+export type { ConvertResult } from "@figit/dom-to-figma";

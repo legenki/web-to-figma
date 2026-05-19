@@ -16,14 +16,14 @@ export type TriggerAction = "copy-whole-page" | "start-picker";
  * function preserves that activation through the listener call, so a
  * downstream `navigator.clipboard.write([ClipboardItem])` is allowed.
  */
-export const TRIGGER_EVENT_NAME = "sleekdesign-copy-to-figma:trigger";
+export const TRIGGER_EVENT_NAME = "figit-copy-to-figma:trigger";
 
 /**
  * Tag of the custom element that hosts our shadow-root UI. The conversion's
  * classify hook skips it so the extension's own DOM never bleeds into the
  * Figma payload.
  */
-export const SHADOW_HOST_NAME = "sleek-copy-figma-ui";
+export const SHADOW_HOST_NAME = "figit-copy-figma-ui";
 
 /**
  * Subscribe to popup-driven trigger events. Returns an unsubscribe function.

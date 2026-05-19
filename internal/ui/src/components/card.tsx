@@ -1,4 +1,4 @@
-import { cn } from "@sleekdesign/ui/lib/utils";
+import { cn } from "@figit/ui/lib/utils";
 import type * as React from "react";
 
 function Card({

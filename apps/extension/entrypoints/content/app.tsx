@@ -1,4 +1,4 @@
-import { Toaster } from "@sleekdesign/ui/components/sonner";
+import { Toaster } from "@figit/ui/components/sonner";
 import { useCallback, useEffect, useState } from "react";
 import type { ContentScriptContext } from "#imports";
 

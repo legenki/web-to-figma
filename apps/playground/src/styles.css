@@ -1,4 +1,4 @@
-@import "@sleekdesign/ui/styles/globals.css";
+@import "@figit/ui/styles/globals.css";
 
 @source "../../../internal/ui/src";
 @source ".";

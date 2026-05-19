@@ -1,4 +1,4 @@
-import type { FigmaClipboard } from "@sleekdesign/dom-to-figma";
+import type { FigmaClipboard } from "@figit/dom-to-figma";
 import { useMemo, useState } from "react";
 
 type NodeChange = FigmaClipboard["nodeChanges"][number];

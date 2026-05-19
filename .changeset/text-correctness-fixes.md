@@ -1,5 +1,5 @@
 ---
-"@sleekdesign/dom-to-figma": patch
+"@figit/dom-to-figma": patch
 ---
 
 Several text correctness fixes that align our output with what Figma writes itself when copying a TEXT node:

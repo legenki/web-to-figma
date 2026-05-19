@@ -1,6 +1,6 @@
 # playground
 
-Interactive sandbox for `@sleekdesign/dom-to-figma`. Browse a corpus of unit and integration scenes, edit the HTML, watch the iframe preview update, inspect the Figma payload tree, and copy to Figma in one click.
+Interactive sandbox for `@figit/dom-to-figma`. Browse a corpus of unit and integration scenes, edit the HTML, watch the iframe preview update, inspect the Figma payload tree, and copy to Figma in one click.
 
 ## Stack
 
@@ -16,7 +16,7 @@ Interactive sandbox for `@sleekdesign/dom-to-figma`. Browse a corpus of unit and
 pnpm --filter playground dev
 ```
 
-The playground consumes `@sleekdesign/dom-to-figma` from source via the workspace, so no separate build step is needed.
+The playground consumes `@figit/dom-to-figma` from source via the workspace, so no separate build step is needed.
 
 ## Layout
 

@@ -1,17 +1,17 @@
 {
-  "name": "@sleekdesign/dom-to-figma",
+  "name": "@figit/dom-to-figma",
   "version": "0.0.0",
   "description": "Convert any DOM tree to a Figma clipboard payload, in the browser.",
   "license": "MIT",
-  "author": "Sleek Design <https://sleek.design>",
-  "homepage": "https://github.com/sleekdotdesign/figma#readme",
+  "author": "Figit <https://figit.design>",
+  "homepage": "https://github.com/figitdesign/web-to-figma#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sleekdotdesign/figma.git",
+    "url": "git+https://github.com/figitdesign/web-to-figma.git",
     "directory": "packages/dom-to-figma"
   },
   "bugs": {
-    "url": "https://github.com/sleekdotdesign/figma/issues"
+    "url": "https://github.com/figitdesign/web-to-figma/issues"
   },
   "keywords": [
     "figma",
@@ -62,7 +62,7 @@
     "lint": "biome check"
   },
   "dependencies": {
-    "@sleekdesign/fig-kiwi": "workspace:*",
+    "@figit/fig-kiwi": "workspace:*",
     "colorjs.io": "^0.6.1",
     "fontkit": "^2.0.4"
   },
