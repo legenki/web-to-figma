@@ -1,0 +1,22 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap">
+<style>
+  body { margin: 0; padding: 48px; background: #ffffff; font-family: Inter, sans-serif; color: #18181b; }
+  .stack { display: flex; flex-direction: column; gap: 40px; max-width: 720px; margin: 0 auto; }
+  .accent {
+    background: linear-gradient(135deg, #f97316, #db2777);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  h1 { text-align: center; line-height: 1.05; font-size: 64px; font-weight: 800; letter-spacing: -0.02em; margin: 0; }
+  .right { text-align: right; line-height: 1.3; font-size: 28px; font-weight: 400; margin: 0; }
+  .right .accent { font-weight: 700; }
+</style>
+<div class="stack">
+  <!-- Centered block whose three inline runs (text, span, text) wrap across
+       three visual lines. Each run must keep its own line origin; under the
+       union-bbox bug they collapse on top of each other at the block centre. -->
+  <h1>Move designs from <span class="accent">browser to Figma</span> in one paste.</h1>
+  <!-- Right-aligned variant: runs share lines and must stay non-overlapping. -->
+  <p class="right">A right-aligned paragraph with <span class="accent">an emphasised inline run</span> that wraps far enough to share lines with the surrounding copy.</p>
+</div>
