@@ -4,7 +4,7 @@
   "api": "1.0.0",
   "editorType": ["figma"],
   "main": "dist/code.js",
-  "ui": "dist/ui.html",
+  "ui": "dist/index.html",
   "networkAccess": {
     "allowedDomains": ["https://cdn.jsdelivr.net", "https://*"],
     "devAllowedDomains": ["http://127.0.0.1:*", "http://localhost:*"],

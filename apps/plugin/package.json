@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "vite build",
-    "dev": "vite build --watch",
+    "build": "PLUGIN_TARGET=code vite build && PLUGIN_TARGET=ui vite build",
+    "dev": "PLUGIN_TARGET=ui vite build --watch",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "check-types": "tsc --noEmit",
