@@ -149,6 +149,23 @@ export async function convertElement(
         hasChildren: false,
       };
 
+    // TODO: convert inline-paragraph blocks to a single multi-run TEXT node.
+    // For now fall through to the frame converter so behaviour is unchanged
+    // until the dedicated paragraph converter is implemented.
+    case "text-paragraph": {
+      const paragraphResult = elementToFrameNodeChange(element, {
+        guid,
+        parentGuid,
+        childIndex,
+        position,
+      });
+      return {
+        changes: [paragraphResult.nodeChange],
+        hasChildren: true,
+        frameTextGradient: paragraphResult.textGradient,
+      };
+    }
+
     default:
       throw new Error(`Unknown ElementKind: ${kind satisfies never}`);
   }
