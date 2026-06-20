@@ -56,4 +56,59 @@ describe("buildNodes", () => {
     expect(result.root.x).toBe(5);
     expect(result.root.y).toBe(6);
   });
+
+  it("ignores the converter's reserved DOCUMENT/CANVAS/root-FRAME scaffold", async () => {
+    // Shape of a real @figit/dom-to-figma document: DOCUMENT(0) -> CANVAS(1) ->
+    // ROOT_FRAME(2), then the user's top-level nodes parented at the root frame
+    // (localID 2). buildNodes is called with rootParentLocalId = 2.
+    const reserved: Array<FigmaNodeChange> = [
+      {
+        type: "DOCUMENT",
+        guid: { sessionID: 0, localID: 0 },
+        phase: "CREATED",
+        name: "Document",
+        visible: true,
+        opacity: 1,
+      } as FigmaNodeChange,
+      {
+        type: "CANVAS",
+        guid: { sessionID: 0, localID: 1 },
+        phase: "CREATED",
+        name: "Page 1",
+        visible: true,
+        opacity: 1,
+        parentIndex: { guid: { sessionID: 0, localID: 0 }, position: "!" },
+      } as FigmaNodeChange,
+      {
+        type: "FRAME",
+        guid: { sessionID: 0, localID: 2 },
+        phase: "CREATED",
+        name: "Frame",
+        visible: true,
+        opacity: 1,
+        size: { x: 200, y: 80 },
+        parentIndex: { guid: { sessionID: 0, localID: 1 }, position: "!" },
+      } as FigmaNodeChange,
+    ];
+    const user: Array<FigmaNodeChange> = [
+      { ...base(3, 2, "FRAME") } as FigmaNodeChange,
+      {
+        ...base(4, 3, "TEXT"),
+        characters: "Hi",
+        fontName: { family: "Inter", style: "Regular" },
+      } as FigmaNodeChange,
+    ];
+    const result = await buildNodes([...reserved, ...user], 2, "My Import");
+
+    // Only the two user nodes are built; DOCUMENT/CANVAS/root-FRAME are skipped.
+    expect(result.summary.built).toBe(2);
+    expect(result.summary.total).toBe(2);
+    expect(result.summary.skipped).toBe(0);
+    // Single user root => returned directly (no extra wrapper frame).
+    expect(result.root.type).toBe("FRAME");
+    expect(result.root.name).toBe("My Import");
+    expect(result.root.children).toHaveLength(1);
+    // biome-ignore lint/style/noNonNullAssertion: length asserted above
+    expect(result.root.children[0]!.type).toBe("TEXT");
+  });
 });

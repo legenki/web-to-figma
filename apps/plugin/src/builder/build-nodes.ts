@@ -88,12 +88,23 @@ export async function buildNodes(
     root: root as BuildResult["root"],
     summary: {
       built,
-      total: changes.length,
+      // Total is the number of buildable nodes in the tree (the converter's
+      // reserved DOCUMENT/CANVAS/root-FRAME scaffold is excluded by buildTree),
+      // so built + skipped accounts for every node we attempted.
+      total: countTreeNodes(tree),
       skipped,
       missingFonts: [...missingFonts],
       warnings,
     },
   };
+}
+
+function countTreeNodes(tree: Array<TreeNode>): number {
+  let count = 0;
+  for (const node of tree) {
+    count += 1 + countTreeNodes(node.children);
+  }
+  return count;
 }
 
 function applyGeometry(

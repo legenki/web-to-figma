@@ -25,7 +25,16 @@ export function buildTree(
     const node = nodes.get(change.guid.localID)!;
     const parentId = change.parentIndex?.guid.localID;
     const position = change.parentIndex?.position ?? "";
-    if (parentId === undefined || parentId === rootParentLocalId) {
+    // A node with no parent is the converter's DOCUMENT scaffold — drop it
+    // (its CANVAS/root-FRAME descendants are reached via rootParentLocalId, not
+    // by walking down from DOCUMENT, so they're dropped too).
+    if (parentId === undefined) {
+      continue;
+    }
+    // Roots are exactly the children of the reserved root frame. The reserved
+    // DOCUMENT/CANVAS/root-FRAME template nodes are never promoted to roots and
+    // so are never rebuilt.
+    if (parentId === rootParentLocalId) {
       roots.push({ node, position });
       continue;
     }
