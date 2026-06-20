@@ -1064,16 +1064,28 @@ export async function buildNodes(
     }
   }
 
-  // Wrap all roots in a single container frame named rootName.
-  const container = figma.createFrame();
-  container.name = rootName;
-  for (const r of tree) {
-    const n = await makeNode(r);
-    if (n) container.appendChild(n);
+  // Single root: return it directly (no redundant wrapper). Multiple roots:
+  // wrap them in one container frame named rootName so the import is one
+  // selectable unit on the canvas.
+  let root: SceneNode | null;
+  if (tree.length === 1) {
+    root = await makeNode(tree[0]!);
+    if (root) root.name = rootName;
+  } else {
+    const container = figma.createFrame();
+    container.name = rootName;
+    for (const r of tree) {
+      const n = await makeNode(r);
+      if (n) container.appendChild(n);
+    }
+    root = container;
+  }
+  if (!root) {
+    throw new Error("No nodes could be built from the converted document");
   }
 
   return {
-    root: container as BuildResult["root"],
+    root: root as BuildResult["root"],
     summary: {
       built,
       total: changes.length,
@@ -1096,6 +1108,7 @@ function applyGeometry(
   }
   node.x = x;
   node.y = y;
+  node.visible = change.visible ?? true;
   if (change.opacity !== undefined && "opacity" in node) {
     (node as FrameNode).opacity = change.opacity;
   }
@@ -1137,24 +1150,37 @@ git commit -m "feat(plugin): orchestrate node tree build with per-node fault tol
 ## Task 12: Wire `code.ts` to the builder
 
 **Files:**
+- Create: `apps/plugin/src/constants.ts`
 - Modify: `apps/plugin/src/code.ts`
 
-The root parent localID is the reserved root frame's localID. Confirm the value by reading `packages/dom-to-figma/src/converter/nodes/root` (`ROOT_FRAME_GUID`); the converter starts user node IDs at `ROOT_RESERVED_GUIDS = 3`, and `ROOT_FRAME_GUID.localID` is the frame children attach to — pass that exact value.
+The root parent localID is the reserved root frame's localID. **Verified value: `2`.**
+In `packages/dom-to-figma/src/converter/nodes/root/converter.ts` the reserved IDs
+are `DOCUMENT_LOCAL_ID = 0`, `CANVAS_LOCAL_ID = 1`, `FRAME_LOCAL_ID = 2`, and
+`ROOT_FRAME_GUID = getGuid(FRAME_LOCAL_ID)`. User node IDs start at
+`ROOT_RESERVED_GUIDS = 3` (see `figma.ts`). The user's top-level nodes attach to
+the root **frame**, whose localID is `2` — not the canvas (`1`).
 
-- [ ] **Step 1: Read the reserved root GUID**
+- [ ] **Step 1: Re-confirm the value before coding (guards against converter drift)**
 
-Run: `grep -rn "ROOT_FRAME_GUID" packages/dom-to-figma/src/converter/nodes/root`
-Expected: a `localID` value (note it for the constant below).
+Run: `grep -n "FRAME_LOCAL_ID\|ROOT_FRAME_GUID" packages/dom-to-figma/src/converter/nodes/root/converter.ts`
+Expected: `FRAME_LOCAL_ID = 2` and `ROOT_FRAME_GUID = getGuid(FRAME_LOCAL_ID)`. If
+`FRAME_LOCAL_ID` is no longer `2`, use the new value in `constants.ts` below.
 
-- [ ] **Step 2: Replace `apps/plugin/src/code.ts`**
+- [ ] **Step 2: Create `apps/plugin/src/constants.ts`**
+
+```ts
+// localID of dom-to-figma's reserved ROOT_FRAME_GUID. The user's top-level
+// nodes list it as their parentIndex.guid. Pinned from
+// packages/dom-to-figma/src/converter/nodes/root/converter.ts (FRAME_LOCAL_ID).
+export const ROOT_PARENT_LOCAL_ID = 2;
+```
+
+- [ ] **Step 3: Replace `apps/plugin/src/code.ts`**
 
 ```ts
 import { buildNodes } from "./builder/build-nodes";
+import { ROOT_PARENT_LOCAL_ID } from "./constants";
 import type { CodeToUi, UiToCode } from "./messages";
-
-// Children of the user's root attach to the reserved root frame; its localID
-// is defined by ROOT_FRAME_GUID in dom-to-figma (verified in Task 12 Step 1).
-const ROOT_PARENT_LOCAL_ID = 1;
 
 figma.showUI(__html__, { width: 420, height: 560 });
 
@@ -1189,15 +1215,15 @@ figma.ui.onmessage = async (msg: UiToCode) => {
 };
 ```
 
-- [ ] **Step 3: Set `ROOT_PARENT_LOCAL_ID` to the value found in Step 1, then type-check**
+- [ ] **Step 4: Type-check**
 
 Run: `pnpm --filter plugin exec tsc --noEmit`
 Expected: PASS.
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
-git add apps/plugin/src/code.ts
+git add apps/plugin/src/code.ts apps/plugin/src/constants.ts
 git commit -m "feat(plugin): handle import messages and place built frame on canvas"
 ```
 
@@ -1216,8 +1242,15 @@ Renders HTML in a nested sandbox iframe so bundled pages' inline scripts run (th
 import { createFigmaConverter } from "@figit/dom-to-figma";
 import type { FigmaNodeChange } from "@figit/dom-to-figma/internal";
 
+// Heuristic delay after `load` for bundled pages to finish unpacking into the
+// DOM. 400ms covers the exported files tested so far; hydration-heavy pages may
+// need more. Future work: replace with a MutationObserver + requestIdleCallback
+// settle detector (tracked in Known Limitations).
 const STABILIZE_MS = 400;
 const LOAD_TIMEOUT_MS = 10000;
+// Generous viewport so wide/tall pages aren't clipped before measurement.
+const RENDER_WIDTH = 1440;
+const RENDER_HEIGHT = 4096;
 
 export type RenderResult = {
   nodeChanges: Array<FigmaNodeChange>;
@@ -1227,8 +1260,7 @@ export type RenderResult = {
 export async function renderAndConvert(html: string, rootName: string): Promise<RenderResult> {
   const iframe = document.createElement("iframe");
   iframe.setAttribute("sandbox", "allow-scripts allow-same-origin");
-  iframe.style.cssText =
-    "position:fixed;left:-99999px;top:0;width:1280px;height:2000px;border:0;visibility:hidden";
+  iframe.style.cssText = `position:fixed;left:-99999px;top:0;width:${RENDER_WIDTH}px;height:${RENDER_HEIGHT}px;border:0;visibility:hidden`;
   document.body.appendChild(iframe);
 
   try {
@@ -1580,7 +1612,25 @@ git commit -m "chore(plugin): workspace verification pass" || echo "nothing to c
 
 ## Notes for the implementer
 
-- **Do not modify** `packages/dom-to-figma` or `packages/fig-kiwi` except for the conditional `./internal` re-export in Task 2a. The converter is consumed as-is.
+- **Do not modify** `packages/dom-to-figma` or `packages/fig-kiwi` except for the `./internal` re-export in Task 2a. The converter is consumed as-is.
 - The Plugin API global `figma` is ambient (from `@figma/plugin-typings`); tests install `createFigmaMock()` onto `globalThis.figma` in `beforeEach`.
 - `__html__` is a Figma-injected global containing the bundled UI; it is typed by `@figma/plugin-typings`.
 - Stack/align enum strings from the converter already match Plugin API enum values — they pass through without translation. If a future converter change diverges, add a small lookup in `auto-layout.ts`.
+
+## Future Work (deferred past V1)
+
+These are deliberately out of V1 scope; create tracking tasks when V1 lands:
+
+- **Gradient direction.** `paint-mapper.ts` uses an identity `gradientTransform`,
+  so linear gradients render top-to-bottom regardless of the CSS angle. Derive the
+  transform from the gradient's encoded direction.
+- **Render stabilization.** `STABILIZE_MS` is a fixed 400ms delay. Replace with a
+  `MutationObserver` that resolves once the DOM stops mutating (plus a
+  `requestIdleCallback` / hard timeout cap) so hydration-heavy bundled pages
+  convert reliably.
+- **Long-render progress.** The UI shows a static "Rendering and converting…"
+  string. Add a spinner / indeterminate indicator for large bundled pages.
+- **IMAGE and VECTOR nodes.** Skipped in V1 (see spec scope). `createImage` for
+  raster fills; SVG → `figma.createVector` / vectorNetwork for vectors.
+- **Icon-font glyph coverage.** Unicode-symbol icons in fonts without those glyphs
+  fall back to `.notdef` ("S"). Detect the actually-rendering font per glyph.
