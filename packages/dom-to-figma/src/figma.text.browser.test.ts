@@ -223,6 +223,27 @@ describe("text rendering with bundled font", () => {
       textChange.textData?.styleOverrideTable?.length ?? 0
     ).toBeGreaterThanOrEqual(1);
   });
+
+  it("keeps a gradient span as a per-run fill override", async () => {
+    // The span uses background-clip:text with color:transparent — a CSS text
+    // gradient. It must survive as a per-run gradient fill on the merged
+    // node's styleOverrideTable, leaving the base node's solid fill intact.
+    const element = mountElement(
+      `<h1 style="width:600px;font-family:'${TEST_FONT_FAMILY}';font-size:32px;color:rgb(0,0,0)">go <span style="background:linear-gradient(135deg,#f97316,#db2777);-webkit-background-clip:text;background-clip:text;color:transparent">far</span></h1>`
+    );
+    const figma = createFigmaConverter({ fontLoader: createTestFontLoader() });
+    const result = await figma.convert({ element, width: 600, height: 120 });
+    const textChange = result.document.nodeChanges.find(
+      (c) => c.type === "TEXT"
+    );
+    if (textChange?.type !== "TEXT") {
+      throw new Error("expected TEXT node");
+    }
+
+    const override = textChange.textData?.styleOverrideTable?.[0];
+    const paint = override?.fillPaints?.[0] as { type?: string } | undefined;
+    expect(paint?.type).toMatch(/GRADIENT/);
+  });
 });
 
 describe("text rendering with Inter", () => {
