@@ -1,0 +1,13 @@
+{
+  "name": "Figit Import",
+  "id": "figit-import-dev",
+  "api": "1.0.0",
+  "editorType": ["figma"],
+  "main": "dist/code.js",
+  "ui": "dist/ui.html",
+  "networkAccess": {
+    "allowedDomains": ["https://cdn.jsdelivr.net", "https://*"],
+    "devAllowedDomains": ["http://127.0.0.1:*", "http://localhost:*"],
+    "reasoning": "Imported HTML may reference fonts and images on arbitrary domains; the default font loader fetches from the fontsource CDN."
+  }
+}
