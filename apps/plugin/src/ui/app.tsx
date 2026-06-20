@@ -45,6 +45,9 @@ export function App() {
       if (msg.missingFonts.length) {
         parts.push(`Missing fonts: ${msg.missingFonts.join(", ")}.`);
       }
+      if (msg.warnings.length) {
+        parts.push(`${msg.warnings.length} warning(s).`);
+      }
       setStatus(parts.join(" "));
     }
     window.addEventListener("message", onMessage);
