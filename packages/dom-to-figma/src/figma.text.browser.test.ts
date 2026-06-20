@@ -197,6 +197,32 @@ describe("text rendering with bundled font", () => {
     }
     expect(textChange.fontName?.style).toBe("Bold");
   });
+
+  it("emits characterStyleIDs and a styleOverrideTable for a styled paragraph", async () => {
+    const element = mountElement(
+      `<h1 style="width:600px;font-family:'${TEST_FONT_FAMILY}';font-size:32px;color:rgb(0,0,0)">Hi <span style="font-weight:700;color:rgb(255,0,0)">bold</span> end</h1>`
+    );
+    const figma = createFigmaConverter({ fontLoader: createTestFontLoader() });
+    const result = await figma.convert({ element, width: 600, height: 120 });
+
+    const textChanges = result.document.nodeChanges.filter(
+      (c) => c.type === "TEXT"
+    );
+    // The whole heading is ONE text node now, not three.
+    expect(textChanges).toHaveLength(1);
+    const textChange = textChanges[0];
+    if (textChange?.type !== "TEXT") {
+      throw new Error("expected TEXT node");
+    }
+
+    expect(textChange.characters).toBe("Hi bold end");
+    expect(textChange.textData?.characterStyleIDs).toHaveLength(
+      "Hi bold end".length
+    );
+    expect(
+      textChange.textData?.styleOverrideTable?.length ?? 0
+    ).toBeGreaterThanOrEqual(1);
+  });
 });
 
 describe("text rendering with Inter", () => {

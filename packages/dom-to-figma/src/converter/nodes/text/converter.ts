@@ -107,6 +107,14 @@ type Params = {
     textGradient?: Array<FigmaPaint>;
   };
   fontCache: FontCache;
+  // When set, this node is a merged inline paragraph: lay out the combined
+  // `characters` and emit per-character style runs. The block element passed
+  // as `node` supplies the base style (styleID 0).
+  paragraph?: {
+    characters: string;
+    characterStyleIDs: Array<number>;
+    styleOverrideTable: Array<import("../../types/text").FigmaStyleOverride>;
+  };
 };
 
 export async function nodeToTextNodeChange(
@@ -136,7 +144,8 @@ export async function nodeToTextNodeChange(
   const computedStyle = window.getComputedStyle(element);
 
   const defaultTextContent = node.textContent?.trim() ?? "";
-  const rawText = textContent ?? defaultTextContent;
+  const rawText =
+    options.paragraph?.characters ?? textContent ?? defaultTextContent;
 
   const defaultSize = isTextNodeValue
     ? getTextSize(node)
@@ -301,6 +310,10 @@ export async function nodeToTextNodeChange(
           isFirstLineOfList: false,
         },
       ],
+      ...(options.paragraph && {
+        characterStyleIDs: options.paragraph.characterStyleIDs,
+        styleOverrideTable: options.paragraph.styleOverrideTable,
+      }),
     },
     derivedTextData: {
       layoutSize: {

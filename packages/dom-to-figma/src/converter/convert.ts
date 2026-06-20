@@ -7,6 +7,7 @@ import { elementToFrameNodeChange } from "./nodes/frame";
 import { elementToGroupNodeChange } from "./nodes/group";
 import { elementToImageNodeChange } from "./nodes/image";
 import { nodeToTextNodeChange } from "./nodes/text";
+import { assembleParagraph, buildStyleRuns } from "./nodes/text/paragraph";
 import type { SVGChildElement } from "./nodes/vector/converter";
 import { elementToVectorNodeChange } from "./nodes/vector/converter";
 import type {
@@ -149,20 +150,27 @@ export async function convertElement(
         hasChildren: false,
       };
 
-    // TODO: convert inline-paragraph blocks to a single multi-run TEXT node.
-    // For now fall through to the frame converter so behaviour is unchanged
-    // until the dedicated paragraph converter is implemented.
     case "text-paragraph": {
-      const paragraphResult = elementToFrameNodeChange(element, {
-        guid,
-        parentGuid,
-        childIndex,
-        position,
-      });
+      const paragraph = assembleParagraph(element);
+      const styleRuns = buildStyleRuns(element, paragraph);
       return {
-        changes: [paragraphResult.nodeChange],
-        hasChildren: true,
-        frameTextGradient: paragraphResult.textGradient,
+        changes: [
+          await nodeToTextNodeChange(element, {
+            guid,
+            parentGuid,
+            childIndex,
+            position,
+            registerBlob,
+            inheritedProperties,
+            fontCache,
+            paragraph: {
+              characters: paragraph.characters,
+              characterStyleIDs: styleRuns.characterStyleIDs,
+              styleOverrideTable: styleRuns.styleOverrideTable,
+            },
+          }),
+        ],
+        hasChildren: false,
       };
     }
 

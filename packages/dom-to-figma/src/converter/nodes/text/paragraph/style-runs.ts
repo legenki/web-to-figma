@@ -113,6 +113,9 @@ export function buildStyleRuns(
         fontName: {
           family: descriptor.family,
           style: styleNameFor(descriptor.weight, descriptor.italic),
+          // The kiwi FontName struct requires postscript; use empty string to
+          // match Figma's own clipboard format for override entries.
+          postscript: "",
         },
         fontSize: descriptor.fontSize,
         fillPaints: descriptor.fills,
