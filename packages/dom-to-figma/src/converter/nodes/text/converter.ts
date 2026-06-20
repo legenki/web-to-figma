@@ -410,6 +410,14 @@ export async function nodeToTextNodeChange(
 
         return glyphPosition;
       }),
+      // V1 limitation: a merged inline paragraph (`options.paragraph`) emits a
+      // single fontMetaData entry for the base (block) font, and all glyph
+      // blobs/positions above use that base font. Per-run fonts ride on
+      // `textData.styleOverrideTable[].fontName` (family+style), which is what
+      // Figma matches on, so each run re-derives with its correct font on
+      // paste. Emitting one fontMetaData entry per distinct run font, and
+      // per-character glyph blobs from each run's own font, is a documented
+      // follow-up — see docs/superpowers/plans/2026-06-20-multi-segment-text-merge.md.
       fontMetaData: [
         {
           key: {

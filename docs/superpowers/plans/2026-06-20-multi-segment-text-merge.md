@@ -14,7 +14,11 @@
 
 ## Known limitation (V1)
 
-Runs that differ in **font size** keep the base-font glyph *positions* from the single layout pass; only same-size runs are positioned exactly. The reported case (centered/right headings whose runs differ in weight, color, or gradient but share one font size) is exact. Mixed-font-size paragraphs may be slightly mispositioned and are out of scope for V1 — a follow-up would lay out each size-run segment and stitch advances. This is a deliberate, documented boundary, not an oversight; Task 7 must add a code comment pointing here.
+**Glyph blobs and positions are generated from the base (block) font for every character.** Per-character `fillPaints`, `fontName`, weight, etc. ride on the `styleOverrideTable`, and `fontMetaData` carries one entry per distinct run font, so Figma re-derives each run with its correct font on paste. But the glyph *commands* and x/y *positions* we emit use the base font's metrics. Consequences:
+- Runs differing only in **weight, color, or gradient** at the **same font size** (the reported case) are exact: advances are font-size-driven and identical, Figma re-shapes weight from the override.
+- Runs differing in **font size** keep base-size positions and may be slightly mispositioned.
+
+A follow-up would lay out each run with its own loaded font and stitch advances/blobs per character. This is a deliberate, documented boundary, not an oversight; Task 7 adds a code comment pointing here. Task 7's scope is therefore: **emit one `fontMetaData` entry per distinct run font** (so Figma matches fonts correctly); it does NOT attempt per-character multi-font glyph blobs.
 
 **Key reference — Figma `TextData` wire format (`packages/fig-kiwi/src/schema.json`, message `TextData` index 88):**
 - `characters: string` — full combined paragraph text.
@@ -768,52 +772,24 @@ git commit -m "feat(text): convert inline-paragraph blocks to one styled TEXT no
 
 ---
 
-## Task 7: Multi-font glyphs and fontMetaData
+## Task 7: Document the base-font glyph/fontMetaData limitation (doc-only)
+
+**Decision (made during execution):** Per-run multi-font glyph blobs and per-run `fontMetaData` entries are DEFERRED to a follow-up, not implemented in V1. Rationale:
+- The per-run font already rides on `textData.styleOverrideTable[].fontName` (family+style), which is what Figma matches fonts by — so each run re-derives with its correct font on paste.
+- A separate per-run `fontMetaData` entry is a metrics/derivation hint whose necessity cannot be verified without pasting into Figma (no Figma access in the execution environment).
+- The test fixtures return the same font bytes for every requested weight, so a multi-entry `fontMetaData` test could only assert echoed weight numbers, not real glyph differences — low verification value.
+- Building per-run font loading + weight-name reversal now is speculative and couples code on a guess.
+
+The reported overlap bug is fully fixed without this. Verify per-run font rendering for real when Figma paste is available (Task 11), and open a follow-up if the override `fontName` proves insufficient.
 
 **Files:**
-- Modify: `packages/dom-to-figma/src/converter/nodes/text/converter.ts` (glyph + fontMetaData emission)
+- Modify: `packages/dom-to-figma/src/converter/nodes/text/converter.ts` — add a comment above the `fontMetaData` array explaining the base-font limitation and pointing at this plan (DONE during execution).
 
-**Notes:** When a paragraph mixes fonts/weights (e.g. a bold span), glyph advances and `fontMetaData` must reflect each run's font. Load each distinct font referenced by `styleOverrideTable` (plus the base) via `fontCache`. Generate glyphs per character using the font for that character's styleID; emit one `fontMetaData` entry per distinct loaded font. Keep positions from the single layout pass when all runs share a size; if a run differs in size, fall back to the base layout for positioning (acceptable for v1 — document it).
+- [ ] **Step 1: Confirm the code comment is present** above the `fontMetaData: [` emission in `converter.ts`, explaining that paragraphs emit one base-font `fontMetaData` entry and per-run fonts ride on `styleOverrideTable[].fontName`.
 
-- [ ] **Step 1: Write the failing test**
+- [ ] **Step 2: Confirm the "Known limitation (V1)" section at the top of this plan reflects the deferral.** (DONE.)
 
-```typescript
-  it("emits one fontMetaData entry per distinct run font", async () => {
-    const element = mountElement(
-      `<h1 style="width:600px;font-family:'${TEST_FONT_FAMILY}';font-size:32px;font-weight:400">light <span style="font-weight:700">heavy</span></h1>`
-    );
-    const figma = createFigmaConverter({ fontLoader: createTestFontLoader() });
-    const result = await figma.convert({ element, width: 600, height: 120 });
-    const textChange = result.document.nodeChanges.find((c) => c.type === "TEXT");
-    if (textChange?.type !== "TEXT") throw new Error("expected TEXT node");
-    const styles = new Set(
-      (textChange.derivedTextData?.fontMetaData ?? []).map((m) => m.fontWeight)
-    );
-    expect(styles.has(400)).toBe(true);
-    expect(styles.has(700)).toBe(true);
-  });
-```
-
-- [ ] **Step 2: Run to verify it fails**
-
-Run: `pnpm --filter @figit/dom-to-figma exec vitest run --project browser src/figma.text.browser.test.ts -t "fontMetaData entry per"`
-Expected: FAIL — only the base weight present.
-
-- [ ] **Step 3: Implement multi-font emission**
-
-Resolve the set of fonts: base + one per `styleOverrideTable` entry that changes `fontName`. Load each through `fontCache`. Build `fontMetaData` from the deduped set. For glyph generation, map each character index → styleID → font, generating that character's glyph blob from the matching loaded font; keep x/y from the existing layout positions. (Reuse `processGlyphs` per font subset, or extend it to accept a per-character font resolver — implementer's choice; smaller diff preferred.)
-
-- [ ] **Step 4: Run to verify it passes**
-
-Run: `pnpm --filter @figit/dom-to-figma exec vitest run --project browser src/figma.text.browser.test.ts -t "fontMetaData entry per"`
-Expected: PASS.
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add packages/dom-to-figma/src/converter/nodes/text/converter.ts
-git commit -m "feat(text): emit per-run fonts and fontMetaData for paragraphs"
-```
+- [ ] **Step 3: Commit (folded into the doc/limitation commit).** No functional code change beyond the comment.
 
 ---
 
