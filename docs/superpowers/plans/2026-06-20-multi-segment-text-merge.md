@@ -20,6 +20,14 @@
 
 A follow-up would lay out each run with its own loaded font and stitch advances/blobs per character. This is a deliberate, documented boundary, not an oversight; Task 7 adds a code comment pointing here. Task 7's scope is therefore: **emit one `fontMetaData` entry per distinct run font** (so Figma matches fonts correctly); it does NOT attempt per-character multi-font glyph blobs.
 
+### Deferred review findings (lower severity, tracked for follow-up)
+
+The branch review surfaced these; the high-severity ones were fixed (text-transform/`characterStyleIDs` alignment, font-style-name reuse, classifier hardening for links / painted-box children / `white-space:pre`). These remain as known gaps:
+- **Per-span `text-transform`** is not captured in `StyleDescriptor`/the override table; only the block-level transform is applied. A span with a different `text-transform` than its block renders with the block's case. (Block-level transforms are correct.)
+- **`letterSpacing: 0` on a run** is suppressed from its override entry, so a run that explicitly resets spacing to 0 under a non-zero base inherits the base spacing. Emit `letterSpacing` whenever it differs from the base, including 0.
+- **`fillsFor` ignores `inheritedProperties.textGradient`**: a paragraph nested under a `background-clip:text` ancestor computes per-run fills from `computedStyle` only, so runs may miss an inherited gradient that the base node receives.
+- **Two-level inline nesting** (`<a><strong>…`, `<em><span>…`) falls through to `frame` because `isInlineParagraph` rejects any child with `children.length > 0`. Common rich text stays multi-node (no overlap regression, just not merged).
+
 **Key reference — Figma `TextData` wire format (`packages/fig-kiwi/src/schema.json`, message `TextData` index 88):**
 - `characters: string` — full combined paragraph text.
 - `characterStyleIDs: uint[]` — one style id per character (Figma run-length-encodes, but a per-character array is valid). `0` = base style (the node's own `fontName`/`fillPaints`).
