@@ -244,6 +244,53 @@ describe("text rendering with bundled font", () => {
     const paint = override?.fillPaints?.[0] as { type?: string } | undefined;
     expect(paint?.type).toMatch(/GRADIENT/);
   });
+
+  it("lays out a centered multi-segment heading as one wrapped TEXT node", async () => {
+    // The reported bug: a centered block with three inline runs (text, span,
+    // text) that wrap across multiple visual lines used to emit three TEXT
+    // nodes that stacked on top of each other at the block centre. It must now
+    // be ONE node whose lines flow downward (strictly increasing line offsets),
+    // with the accent span preserved as a per-character style override.
+    // NB: an <h1> is bold (700) by default, so the accent must differ in
+    // colour (as in the real landing scene), not weight, to register a run.
+    const FRAME = 360;
+    const element = mountElement(
+      `<h1 style="width:${FRAME}px;text-align:center;line-height:1.05;font-size:48px;font-family:'${TEST_FONT_FAMILY}',sans-serif;margin:0">Move designs from <span style="color:rgb(249,115,22)">browser to Figma</span> in one paste.</h1>`
+    );
+    const figma = createFigmaConverter({ fontLoader: createTestFontLoader() });
+    const result = await figma.convert({ element, width: FRAME, height: 400 });
+
+    const textChanges = result.document.nodeChanges.filter(
+      (c) => c.type === "TEXT"
+    );
+    expect(textChanges).toHaveLength(1);
+    const textChange = textChanges[0];
+    if (textChange?.type !== "TEXT") {
+      throw new Error("expected TEXT node");
+    }
+
+    expect(textChange.characters).toBe(
+      "Move designs from browser to Figma in one paste."
+    );
+
+    // Wrapped onto multiple lines with strictly increasing line offsets — the
+    // runs no longer stack: each baseline sits below the previous one.
+    const baselines = textChange.derivedTextData?.baselines ?? [];
+    expect(baselines.length).toBeGreaterThanOrEqual(2);
+    for (let i = 1; i < baselines.length; i += 1) {
+      const prev = baselines[i - 1];
+      const current = baselines[i];
+      if (!(prev && current)) {
+        throw new Error("expected adjacent baselines");
+      }
+      expect(current.lineY).toBeGreaterThan(prev.lineY);
+    }
+
+    // The bold span survived as a per-character style override.
+    expect(
+      textChange.textData?.styleOverrideTable?.length ?? 0
+    ).toBeGreaterThanOrEqual(1);
+  });
 });
 
 describe("text rendering with Inter", () => {
