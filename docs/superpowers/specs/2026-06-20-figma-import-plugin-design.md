@@ -38,7 +38,20 @@ binary `.fig` path.
 
 **In:** FRAME, TEXT, GROUP, CANVAS/DOCUMENT roots; SOLID + GRADIENT_LINEAR fills;
 drop shadows / inner shadows; corner radius (uniform + per-corner); borders;
-auto-layout (`stackMode`); fonts via `loadFontAsync` with fallback to Inter.
+auto-layout; fonts via `loadFontAsync` with fallback to Inter.
+
+Auto-layout mapping (from `FigmaFrameNodeChange` stack fields → Plugin API):
+- `stackMode` (HORIZONTAL/VERTICAL/NONE) → `layoutMode`
+- `stackSpacing` → `itemSpacing`; `stackCounterSpacing` → `counterAxisSpacing`;
+  `stackWrap` → `layoutWrap`
+- `stackHorizontalPadding`/`stackPaddingRight` → `paddingLeft`/`paddingRight`;
+  `stackVerticalPadding`/`stackPaddingBottom` → `paddingTop`/`paddingBottom`
+- `stackPrimarySizing` → `primaryAxisSizingMode`;
+  `stackCounterSizing` → `counterAxisSizingMode`
+- `stackPrimaryAlignItems` → `primaryAxisAlignItems`;
+  `stackCounterAlignItems` → `counterAxisAlignItems`
+- `stackChildAlignSelf` → child `layoutAlign`;
+  `stackChildPrimaryGrow` → child `layoutGrow`
 
 **Out (later versions):** VECTOR nodes (SVG → vectorNetwork), IMAGE nodes
 (`figma.createImage`), icon-font glyph fidelity (the "S" placeholder issue).
@@ -46,6 +59,36 @@ auto-layout (`stackMode`); fonts via `loadFontAsync` with fallback to Inter.
 ## Architecture
 
 Two execution contexts, communicating via `postMessage`:
+
+```mermaid
+flowchart TD
+    A[User: drop .html / paste markup] --> B[render-host: nested sandbox iframe<br/>srcdoc + allow-scripts]
+    B --> C{wait for load<br/>+ DOM stabilization}
+    C -->|bundled page unpacked| D[dom-to-figma.convert<br/>iframe.contentDocument.body]
+    D --> E[FigmaClipboard<br/>nodeChanges: FigmaNodeChange&#91;&#93;]
+    E -->|postMessage| F[code.ts: node-builder]
+    F --> G[rebuild tree by guid / parentIndex]
+    G --> H[create Plugin API nodes<br/>fills · effects · text · auto-layout]
+    H --> I[loadFontAsync + Inter fallback]
+    I --> J[appendChild to currentPage<br/>scrollAndZoomIntoView]
+
+    subgraph ui[ui.html iframe — DOM, fetch, fontkit]
+        A
+        B
+        C
+        D
+        E
+    end
+    subgraph sandbox[code.ts — QuickJS, Plugin API, no DOM]
+        F
+        G
+        H
+        I
+        J
+    end
+```
+
+Detailed view:
 
 ```
 ui.html (iframe — DOM, fetch, fontkit)
@@ -96,7 +139,9 @@ lives in a new `apps/plugin` workspace.
      `Inter Regular`; then set `characters`, `fontSize`, `lineHeight`,
      `letterSpacing`, `textAlignHorizontal`, `fillPaints`.
    - `transform`: matrix `{m00..m12}` → `x = m02`, `y = m12`, rotation from
-     `m00/m10` (typically 0 in V1). Size from `size.{x,y}`.
+     `m00/m10` (typically 0 in V1). Size from `size.{x,y}`. **Shear and non-unit
+     scale are not supported in V1** — they are ignored, and a non-trivial shear
+     emits a warning (collected into the final import summary).
 
 ## Data flow specifics
 
@@ -136,3 +181,7 @@ lives in a new `apps/plugin` workspace.
 - Centered, multi-segment wrapping text (e.g. an `<h1>` with inline `<span>`s)
   currently overlaps — a pre-existing `dom-to-figma` bug already filed as a task,
   independent of the plugin.
+- Post-import behavior in V1: imported content is always created as a **new Frame
+  on the current page**. The exact placement (offset relative to the viewport),
+  selection, and zoom-to-fit are settled in the implementation plan; there is no
+  merge-into-existing-frame or re-import-in-place in V1.
