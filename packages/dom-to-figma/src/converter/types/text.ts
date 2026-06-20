@@ -17,6 +17,31 @@ export type FigmaTextCase =
 export type FigmaTextData = {
   characters: string;
   lines?: Array<unknown>;
+  // One style id per character. Index into `styleOverrideTable` by matching
+  // `styleID`; id 0 is the node's base style. Parallel to `characters`.
+  characterStyleIDs?: Array<number>;
+  // Partial NodeChanges, each keyed by `styleID`, overriding only the
+  // properties that differ from the base style (fill, fontName, fontSize, …).
+  styleOverrideTable?: Array<FigmaStyleOverride>;
+};
+
+// A style-override entry is a TEXT-shaped partial change carrying a styleID
+// plus the overridden text properties.
+export type FigmaStyleOverride = {
+  styleID: number;
+  fontName?: {
+    family: string;
+    style: string;
+    postscript?: string;
+  };
+  fontSize?: number;
+  fillPaints?: Array<unknown>;
+  textDecoration?: FigmaTextDecoration;
+  textCase?: FigmaTextCase;
+  letterSpacing?: {
+    value: number;
+    units: string;
+  };
 };
 
 export type FigmaDerivedTextData = {

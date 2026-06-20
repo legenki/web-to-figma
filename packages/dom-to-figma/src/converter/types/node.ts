@@ -83,6 +83,8 @@ export type FigmaTextNodeChange = FigmaBaseNodeChange & {
   strokeCap?: string;
   strokeJoin?: string;
   fillPaints?: Array<FigmaPaint>;
+  // Present only on entries inside `textData.styleOverrideTable`.
+  styleID?: number;
   targetAspectRatio?: {
     value: {
       x: number;
