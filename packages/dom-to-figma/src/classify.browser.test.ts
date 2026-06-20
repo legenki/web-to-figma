@@ -46,4 +46,28 @@ describe("defaultClassify — inline paragraphs", () => {
     expect(defaultClassify(block)).toBe("frame");
     document.body.innerHTML = "";
   });
+
+  it("leaves a block with a link child as a frame (href must not be lost)", () => {
+    const block = mount(
+      `<p style="font-family:'${TEST_FONT_FAMILY}'">see <a href="/x">the docs</a> now</p>`
+    );
+    expect(defaultClassify(block)).toBe("frame");
+    document.body.innerHTML = "";
+  });
+
+  it("leaves a block whose inline child has its own painted box as a frame", () => {
+    const block = mount(
+      `<p style="font-family:'${TEST_FONT_FAMILY}'">press <span style="background:rgb(240,240,240);padding:2px 4px">Enter</span></p>`
+    );
+    expect(defaultClassify(block)).toBe("frame");
+    document.body.innerHTML = "";
+  });
+
+  it("leaves a white-space:pre block as a frame (whitespace must be preserved)", () => {
+    const block = mount(
+      `<p style="font-family:'${TEST_FONT_FAMILY}';white-space:pre">a   <span>b</span></p>`
+    );
+    expect(defaultClassify(block)).toBe("frame");
+    document.body.innerHTML = "";
+  });
 });

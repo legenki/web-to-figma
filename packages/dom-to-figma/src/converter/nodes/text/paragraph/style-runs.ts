@@ -2,6 +2,7 @@ import { createSolidPaint, cssColorToFigmaColor } from "../../../styles/color";
 import { cssBackgroundToFigmaPaints } from "../../../styles/gradient";
 import type { FigmaPaint } from "../../../types";
 import type { FigmaStyleOverride } from "../../../types/text";
+import { buildFontStyleName } from "../primitives/font/loader";
 import { parseFontProperties } from "../primitives/font/properties";
 import type { AssembledParagraph } from "./assembler";
 
@@ -65,20 +66,6 @@ function descriptorKey(d: StyleDescriptor): string {
   return `${d.family}|${d.weight}|${d.italic}|${d.fontSize}|${d.fillKey}|${d.textDecoration}|${d.letterSpacing}`;
 }
 
-function styleNameFor(weight: number, italic: boolean): string {
-  let base = "Regular";
-  if (weight >= 700) {
-    base = "Bold";
-  } else if (weight >= 600) {
-    base = "SemiBold";
-  } else if (weight >= 500) {
-    base = "Medium";
-  } else if (weight <= 300) {
-    base = "Light";
-  }
-  return italic ? `${base} Italic` : base;
-}
-
 /**
  * Build the per-character style id array and the override table for an
  * assembled paragraph. styleID 0 is the block's base style; any run that
@@ -112,7 +99,7 @@ export function buildStyleRuns(
         styleID: id,
         fontName: {
           family: descriptor.family,
-          style: styleNameFor(descriptor.weight, descriptor.italic),
+          style: buildFontStyleName(descriptor.weight, descriptor.italic),
           // The kiwi FontName struct requires postscript; use empty string to
           // match Figma's own clipboard format for override entries.
           postscript: "",

@@ -213,6 +213,18 @@ export async function nodeToTextNodeChange(
 
   const text = applyCssTextTransform(rawText, textTransform);
 
+  // `characterStyleIDs` is parallel to the emitted `characters` (= post
+  // `text-transform`). For Latin case changes the transform is 1:1, but some
+  // transforms expand (e.g. uppercase ß → SS), which would desync the ids. If
+  // the length changed, drop the per-run overrides rather than emit a
+  // misaligned map — the paragraph renders in its base style. (Rare; tracked
+  // as a follow-up in the multi-segment text plan.)
+  const paragraphStyles =
+    options.paragraph &&
+    options.paragraph.characterStyleIDs.length === text.length
+      ? options.paragraph
+      : undefined;
+
   // It's generally more accurate to use the actual box height as the line height, but this doesn't work for text on multiple lines,
   // so in that case we use the computed line height.
   const computedLineHeight =
@@ -310,9 +322,9 @@ export async function nodeToTextNodeChange(
           isFirstLineOfList: false,
         },
       ],
-      ...(options.paragraph && {
-        characterStyleIDs: options.paragraph.characterStyleIDs,
-        styleOverrideTable: options.paragraph.styleOverrideTable,
+      ...(paragraphStyles && {
+        characterStyleIDs: paragraphStyles.characterStyleIDs,
+        styleOverrideTable: paragraphStyles.styleOverrideTable,
       }),
     },
     derivedTextData: {

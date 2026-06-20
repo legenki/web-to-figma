@@ -291,6 +291,29 @@ describe("text rendering with bundled font", () => {
       textChange.textData?.styleOverrideTable?.length ?? 0
     ).toBeGreaterThanOrEqual(1);
   });
+
+  it("keeps characterStyleIDs aligned with the post-transform characters", async () => {
+    // text-transform:uppercase on German ß expands to SS, so the emitted
+    // `characters` is longer than the assembled source. characterStyleIDs must
+    // never be a shorter, misaligned map: it is either omitted or exactly the
+    // length of `characters`.
+    const element = mountElement(
+      `<h1 style="width:600px;font-family:'${TEST_FONT_FAMILY}';font-size:32px;text-transform:uppercase;color:rgb(0,0,0)">straße <span style="color:rgb(255,0,0)">rot</span></h1>`
+    );
+    const figma = createFigmaConverter({ fontLoader: createTestFontLoader() });
+    const result = await figma.convert({ element, width: 600, height: 120 });
+    const textChange = result.document.nodeChanges.find(
+      (c) => c.type === "TEXT"
+    );
+    if (textChange?.type !== "TEXT") {
+      throw new Error("expected TEXT node");
+    }
+
+    const ids = textChange.textData?.characterStyleIDs;
+    if (ids !== undefined) {
+      expect(ids).toHaveLength(textChange.characters.length);
+    }
+  });
 });
 
 describe("text rendering with Inter", () => {

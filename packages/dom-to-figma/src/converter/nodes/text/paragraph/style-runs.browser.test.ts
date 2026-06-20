@@ -52,4 +52,17 @@ describe("buildStyleRuns", () => {
     expect(new Set(runs.characterStyleIDs)).toEqual(new Set([0]));
     document.body.innerHTML = "";
   });
+
+  it("resolves the override style name via the shared font-weight table", () => {
+    // weight 800 must resolve to "ExtraBold", not the coarse "Bold" — the
+    // style name comes from the same buildFontStyleName the font loader uses.
+    const block = mount(
+      `<p style="font-family:'${TEST_FONT_FAMILY}';font-weight:400">a <span style="font-weight:800">heavy</span></p>`
+    );
+    const para = assembleParagraph(block);
+    const runs = buildStyleRuns(block, para);
+    expect(runs.styleOverrideTable).toHaveLength(1);
+    expect(runs.styleOverrideTable[0]?.fontName?.style).toBe("ExtraBold");
+    document.body.innerHTML = "";
+  });
 });
