@@ -11,6 +11,10 @@ export default defineConfig(
         build: {
           outDir: "dist",
           emptyOutDir: false,
+          // Figma's plugin sandbox (QuickJS) does not support optional chaining
+          // (?.) or nullish coalescing (??). Transpile the sandbox bundle down
+          // to es2017 so those tokens never reach the engine.
+          target: "es2017",
           lib: {
             entry: resolve(import.meta.dirname, "src/code.ts"),
             formats: ["iife"],
