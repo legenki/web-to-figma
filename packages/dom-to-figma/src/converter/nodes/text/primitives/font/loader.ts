@@ -123,7 +123,7 @@ function isFont(value: unknown): value is Font {
   return type !== "TTC" && type !== "DFont";
 }
 
-function buildFontStyleName(weight: number, italic: boolean): string {
+export function buildFontStyleName(weight: number, italic: boolean): string {
   const baseName = WEIGHT_TO_STYLE_NAME[weight] ?? "Regular";
   if (!italic) {
     return baseName;

@@ -69,6 +69,12 @@
           }
         }
       }
+    },
+    {
+      "includes": ["apps/plugin/src/**"],
+      "javascript": {
+        "globals": ["figma", "__html__"]
+      }
     }
   ]
 }

@@ -107,6 +107,14 @@ type Params = {
     textGradient?: Array<FigmaPaint>;
   };
   fontCache: FontCache;
+  // When set, this node is a merged inline paragraph: lay out the combined
+  // `characters` and emit per-character style runs. The block element passed
+  // as `node` supplies the base style (styleID 0).
+  paragraph?: {
+    characters: string;
+    characterStyleIDs: Array<number>;
+    styleOverrideTable: Array<import("../../types/text").FigmaStyleOverride>;
+  };
 };
 
 export async function nodeToTextNodeChange(
@@ -136,7 +144,8 @@ export async function nodeToTextNodeChange(
   const computedStyle = window.getComputedStyle(element);
 
   const defaultTextContent = node.textContent?.trim() ?? "";
-  const rawText = textContent ?? defaultTextContent;
+  const rawText =
+    options.paragraph?.characters ?? textContent ?? defaultTextContent;
 
   const defaultSize = isTextNodeValue
     ? getTextSize(node)
@@ -203,6 +212,18 @@ export async function nodeToTextNodeChange(
   const figmaTextCase = cssToFigmaTextCaseMap[textTransform] ?? "ORIGINAL";
 
   const text = applyCssTextTransform(rawText, textTransform);
+
+  // `characterStyleIDs` is parallel to the emitted `characters` (= post
+  // `text-transform`). For Latin case changes the transform is 1:1, but some
+  // transforms expand (e.g. uppercase ß → SS), which would desync the ids. If
+  // the length changed, drop the per-run overrides rather than emit a
+  // misaligned map — the paragraph renders in its base style. (Rare; tracked
+  // as a follow-up in the multi-segment text plan.)
+  const paragraphStyles =
+    options.paragraph &&
+    options.paragraph.characterStyleIDs.length === text.length
+      ? options.paragraph
+      : undefined;
 
   // It's generally more accurate to use the actual box height as the line height, but this doesn't work for text on multiple lines,
   // so in that case we use the computed line height.
@@ -301,6 +322,10 @@ export async function nodeToTextNodeChange(
           isFirstLineOfList: false,
         },
       ],
+      ...(paragraphStyles && {
+        characterStyleIDs: paragraphStyles.characterStyleIDs,
+        styleOverrideTable: paragraphStyles.styleOverrideTable,
+      }),
     },
     derivedTextData: {
       layoutSize: {
@@ -397,6 +422,14 @@ export async function nodeToTextNodeChange(
 
         return glyphPosition;
       }),
+      // V1 limitation: a merged inline paragraph (`options.paragraph`) emits a
+      // single fontMetaData entry for the base (block) font, and all glyph
+      // blobs/positions above use that base font. Per-run fonts ride on
+      // `textData.styleOverrideTable[].fontName` (family+style), which is what
+      // Figma matches on, so each run re-derives with its correct font on
+      // paste. Emitting one fontMetaData entry per distinct run font, and
+      // per-character glyph blobs from each run's own font, is a documented
+      // follow-up — see docs/superpowers/plans/2026-06-20-multi-segment-text-merge.md.
       fontMetaData: [
         {
           key: {

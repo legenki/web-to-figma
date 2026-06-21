@@ -197,6 +197,123 @@ describe("text rendering with bundled font", () => {
     }
     expect(textChange.fontName?.style).toBe("Bold");
   });
+
+  it("emits characterStyleIDs and a styleOverrideTable for a styled paragraph", async () => {
+    const element = mountElement(
+      `<h1 style="width:600px;font-family:'${TEST_FONT_FAMILY}';font-size:32px;color:rgb(0,0,0)">Hi <span style="font-weight:700;color:rgb(255,0,0)">bold</span> end</h1>`
+    );
+    const figma = createFigmaConverter({ fontLoader: createTestFontLoader() });
+    const result = await figma.convert({ element, width: 600, height: 120 });
+
+    const textChanges = result.document.nodeChanges.filter(
+      (c) => c.type === "TEXT"
+    );
+    // The whole heading is ONE text node now, not three.
+    expect(textChanges).toHaveLength(1);
+    const textChange = textChanges[0];
+    if (textChange?.type !== "TEXT") {
+      throw new Error("expected TEXT node");
+    }
+
+    expect(textChange.characters).toBe("Hi bold end");
+    expect(textChange.textData?.characterStyleIDs).toHaveLength(
+      "Hi bold end".length
+    );
+    expect(
+      textChange.textData?.styleOverrideTable?.length ?? 0
+    ).toBeGreaterThanOrEqual(1);
+  });
+
+  it("keeps a gradient span as a per-run fill override", async () => {
+    // The span uses background-clip:text with color:transparent — a CSS text
+    // gradient. It must survive as a per-run gradient fill on the merged
+    // node's styleOverrideTable, leaving the base node's solid fill intact.
+    const element = mountElement(
+      `<h1 style="width:600px;font-family:'${TEST_FONT_FAMILY}';font-size:32px;color:rgb(0,0,0)">go <span style="background:linear-gradient(135deg,#f97316,#db2777);-webkit-background-clip:text;background-clip:text;color:transparent">far</span></h1>`
+    );
+    const figma = createFigmaConverter({ fontLoader: createTestFontLoader() });
+    const result = await figma.convert({ element, width: 600, height: 120 });
+    const textChange = result.document.nodeChanges.find(
+      (c) => c.type === "TEXT"
+    );
+    if (textChange?.type !== "TEXT") {
+      throw new Error("expected TEXT node");
+    }
+
+    const override = textChange.textData?.styleOverrideTable?.[0];
+    const paint = override?.fillPaints?.[0] as { type?: string } | undefined;
+    expect(paint?.type).toMatch(/GRADIENT/);
+  });
+
+  it("lays out a centered multi-segment heading as one wrapped TEXT node", async () => {
+    // The reported bug: a centered block with three inline runs (text, span,
+    // text) that wrap across multiple visual lines used to emit three TEXT
+    // nodes that stacked on top of each other at the block centre. It must now
+    // be ONE node whose lines flow downward (strictly increasing line offsets),
+    // with the accent span preserved as a per-character style override.
+    // NB: an <h1> is bold (700) by default, so the accent must differ in
+    // colour (as in the real landing scene), not weight, to register a run.
+    const FRAME = 360;
+    const element = mountElement(
+      `<h1 style="width:${FRAME}px;text-align:center;line-height:1.05;font-size:48px;font-family:'${TEST_FONT_FAMILY}',sans-serif;margin:0">Move designs from <span style="color:rgb(249,115,22)">browser to Figma</span> in one paste.</h1>`
+    );
+    const figma = createFigmaConverter({ fontLoader: createTestFontLoader() });
+    const result = await figma.convert({ element, width: FRAME, height: 400 });
+
+    const textChanges = result.document.nodeChanges.filter(
+      (c) => c.type === "TEXT"
+    );
+    expect(textChanges).toHaveLength(1);
+    const textChange = textChanges[0];
+    if (textChange?.type !== "TEXT") {
+      throw new Error("expected TEXT node");
+    }
+
+    expect(textChange.characters).toBe(
+      "Move designs from browser to Figma in one paste."
+    );
+
+    // Wrapped onto multiple lines with strictly increasing line offsets — the
+    // runs no longer stack: each baseline sits below the previous one.
+    const baselines = textChange.derivedTextData?.baselines ?? [];
+    expect(baselines.length).toBeGreaterThanOrEqual(2);
+    for (let i = 1; i < baselines.length; i += 1) {
+      const prev = baselines[i - 1];
+      const current = baselines[i];
+      if (!(prev && current)) {
+        throw new Error("expected adjacent baselines");
+      }
+      expect(current.lineY).toBeGreaterThan(prev.lineY);
+    }
+
+    // The bold span survived as a per-character style override.
+    expect(
+      textChange.textData?.styleOverrideTable?.length ?? 0
+    ).toBeGreaterThanOrEqual(1);
+  });
+
+  it("keeps characterStyleIDs aligned with the post-transform characters", async () => {
+    // text-transform:uppercase on German ß expands to SS, so the emitted
+    // `characters` is longer than the assembled source. characterStyleIDs must
+    // never be a shorter, misaligned map: it is either omitted or exactly the
+    // length of `characters`.
+    const element = mountElement(
+      `<h1 style="width:600px;font-family:'${TEST_FONT_FAMILY}';font-size:32px;text-transform:uppercase;color:rgb(0,0,0)">straße <span style="color:rgb(255,0,0)">rot</span></h1>`
+    );
+    const figma = createFigmaConverter({ fontLoader: createTestFontLoader() });
+    const result = await figma.convert({ element, width: 600, height: 120 });
+    const textChange = result.document.nodeChanges.find(
+      (c) => c.type === "TEXT"
+    );
+    if (textChange?.type !== "TEXT") {
+      throw new Error("expected TEXT node");
+    }
+
+    const ids = textChange.textData?.characterStyleIDs;
+    if (ids !== undefined) {
+      expect(ids).toHaveLength(textChange.characters.length);
+    }
+  });
 });
 
 describe("text rendering with Inter", () => {

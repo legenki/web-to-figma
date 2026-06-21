@@ -1,0 +1,12 @@
+{
+  "name": "Figit Import",
+  "id": "figit-import-dev",
+  "api": "1.0.0",
+  "editorType": ["figma"],
+  "main": "dist/code.js",
+  "ui": "dist/index.html",
+  "networkAccess": {
+    "allowedDomains": ["https://cdn.jsdelivr.net"],
+    "reasoning": "The default font loader fetches webfonts from the fontsource CDN (jsDelivr). Assets referenced by the imported HTML load inside the nested render iframe, which is outside this plugin-UI network scope."
+  }
+}

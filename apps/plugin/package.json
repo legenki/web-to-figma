@@ -1,0 +1,30 @@
+{
+  "name": "plugin",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "PLUGIN_TARGET=code vite build && PLUGIN_TARGET=ui vite build",
+    "dev": "PLUGIN_TARGET=ui vite build --watch",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest",
+    "check-types": "tsc --noEmit",
+    "lint": "biome check"
+  },
+  "dependencies": {
+    "@figit/dom-to-figma": "workspace:*",
+    "@figit/ui": "workspace:*",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.100.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "typescript": "catalog:",
+    "vite": "^8.0.10",
+    "vite-plugin-singlefile": "^2.0.3",
+    "vitest": "^4.1.5"
+  }
+}

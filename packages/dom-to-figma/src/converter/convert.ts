@@ -7,6 +7,7 @@ import { elementToFrameNodeChange } from "./nodes/frame";
 import { elementToGroupNodeChange } from "./nodes/group";
 import { elementToImageNodeChange } from "./nodes/image";
 import { nodeToTextNodeChange } from "./nodes/text";
+import { assembleParagraph, buildStyleRuns } from "./nodes/text/paragraph";
 import type { SVGChildElement } from "./nodes/vector/converter";
 import { elementToVectorNodeChange } from "./nodes/vector/converter";
 import type {
@@ -148,6 +149,30 @@ export async function convertElement(
         }),
         hasChildren: false,
       };
+
+    case "text-paragraph": {
+      const paragraph = assembleParagraph(element);
+      const styleRuns = buildStyleRuns(element, paragraph);
+      return {
+        changes: [
+          await nodeToTextNodeChange(element, {
+            guid,
+            parentGuid,
+            childIndex,
+            position,
+            registerBlob,
+            inheritedProperties,
+            fontCache,
+            paragraph: {
+              characters: paragraph.characters,
+              characterStyleIDs: styleRuns.characterStyleIDs,
+              styleOverrideTable: styleRuns.styleOverrideTable,
+            },
+          }),
+        ],
+        hasChildren: false,
+      };
+    }
 
     default:
       throw new Error(`Unknown ElementKind: ${kind satisfies never}`);

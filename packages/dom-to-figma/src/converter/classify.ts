@@ -7,6 +7,7 @@ export type ElementKind =
   | "vector"
   | "image"
   | "text"
+  | "text-paragraph"
   | "form-with-placeholder";
 
 export function defaultClassify(element: Element): ElementKind {
@@ -27,6 +28,9 @@ export function defaultClassify(element: Element): ElementKind {
   }
   if (isPlainTextElement(element)) {
     return "text";
+  }
+  if (isInlineParagraph(element)) {
+    return "text-paragraph";
   }
   if (isFormElementWithPlaceholder(element) && hasPlaceholderText(element)) {
     return "form-with-placeholder";
@@ -96,19 +100,91 @@ function isImageElement(element: Element): boolean {
 function isPlainTextElement(element: Element): boolean {
   const computedStyle = window.getComputedStyle(element);
   const hasText = !!(element.textContent || "").trim().length;
-  const isTransparent = TRANSPARENT_COLOR_VALUES.includes(
-    computedStyle.backgroundColor
-  );
-  const hasNoPadding = computedStyle.padding === "0px";
-  const hasNoBorder = computedStyle.borderWidth === "0px";
 
   return (
-    hasText &&
-    element.children.length === 0 &&
-    isTransparent &&
-    hasNoPadding &&
-    hasNoBorder
+    hasText && element.children.length === 0 && hasNoPaintedBox(computedStyle)
   );
+}
+
+/**
+ * Whether an element paints no box of its own — transparent background, no
+ * padding, no border. Such an element can be collapsed into text without
+ * losing visible decoration.
+ */
+function hasNoPaintedBox(computedStyle: CSSStyleDeclaration): boolean {
+  return (
+    TRANSPARENT_COLOR_VALUES.includes(computedStyle.backgroundColor) &&
+    computedStyle.padding === "0px" &&
+    computedStyle.borderWidth === "0px"
+  );
+}
+
+// Inline children that must NOT be merged into the paragraph text: replaced
+// elements, line breaks, and links/buttons whose semantics (href, target)
+// would be silently lost in a flat TEXT node.
+const NON_MERGEABLE_INLINE_TAGS = new Set([
+  "img",
+  "svg",
+  "input",
+  "textarea",
+  "br",
+  "a",
+  "button",
+]);
+
+/**
+ * A block whose rendered children are all inline runs (sibling text nodes and
+ * inline leaf elements) and which has no painted box of its own. Such a block
+ * is one paragraph and must convert to a single TEXT node so its runs share
+ * one layout pass — see the multi-segment text plan.
+ *
+ * Conservative on purpose: anything that would lose information when flattened
+ * to text — a painted box on the block or on a child, a link/replaced/nested
+ * child, or preserved whitespace (`white-space` other than the collapsing
+ * defaults) — falls through to `frame`, preserving today's behavior.
+ */
+function isInlineParagraph(element: Element): boolean {
+  if (!(element.textContent || "").trim().length) {
+    return false;
+  }
+  const childElements = Array.from(element.children);
+  if (childElements.length === 0) {
+    return false; // solo text → handled by `isPlainTextElement` above
+  }
+
+  const computedStyle = window.getComputedStyle(element);
+  // A painted box on the block would be dropped when collapsing to a TEXT node.
+  if (!hasNoPaintedBox(computedStyle)) {
+    return false;
+  }
+  // The assembler collapses whitespace; a block that preserves it (pre /
+  // pre-wrap / pre-line / break-spaces) would have its text corrupted.
+  const whiteSpace = computedStyle.whiteSpace;
+  if (whiteSpace !== "normal" && whiteSpace !== "nowrap") {
+    return false;
+  }
+
+  for (const child of childElements) {
+    if (NON_MERGEABLE_INLINE_TAGS.has(child.tagName.toLowerCase())) {
+      return false;
+    }
+    if (child.children.length > 0) {
+      return false; // nested structure — not a flat inline run
+    }
+    const childStyle = window.getComputedStyle(child);
+    if (
+      childStyle.display !== "inline" &&
+      childStyle.display !== "inline-block"
+    ) {
+      return false;
+    }
+    // A child with its own painted box (e.g. a highlighted <span> or a <kbd>
+    // keycap) must stay a frame so its box survives.
+    if (!hasNoPaintedBox(childStyle)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 const FORM_PLACEHOLDER_EXCLUDED_TYPES = [
