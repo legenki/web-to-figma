@@ -113,7 +113,7 @@ Each builder sub-module has one responsibility and is unit-tested in isolation a
 
 - [ ] **Step 3: Create `apps/plugin/manifest.json`**
 
-`networkAccess.allowedDomains` lists the fontsource CDN the default font loader uses; `devAllowedDomains` allows the local static server used to test bundled HTML files. `reasoning` is required because we also allow `https://*` for arbitrary page assets (fonts/images referenced by imported HTML).
+`networkAccess.allowedDomains` lists the fontsource CDN the default font loader uses; `devAllowedDomains` allows the local static server used to test bundled HTML files. Figma rejects a bare `"https://*"` entry ("must be a valid URL"), so list concrete hosts only. Assets referenced by the imported HTML load inside the nested render iframe, which is outside the plugin-UI network scope, so they need no entry here. The `ui` field points at `dist/index.html` (what Vite emits).
 
 ```json
 {
@@ -122,11 +122,11 @@ Each builder sub-module has one responsibility and is unit-tested in isolation a
   "api": "1.0.0",
   "editorType": ["figma"],
   "main": "dist/code.js",
-  "ui": "dist/ui.html",
+  "ui": "dist/index.html",
   "networkAccess": {
-    "allowedDomains": ["https://cdn.jsdelivr.net", "https://*"],
+    "allowedDomains": ["https://cdn.jsdelivr.net"],
     "devAllowedDomains": ["http://127.0.0.1:*", "http://localhost:*"],
-    "reasoning": "Imported HTML may reference fonts and images on arbitrary domains; the default font loader fetches from the fontsource CDN."
+    "reasoning": "The default font loader fetches webfonts from the fontsource CDN (jsDelivr)."
   }
 }
 ```
