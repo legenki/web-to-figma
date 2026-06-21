@@ -6,8 +6,8 @@
   "main": "dist/code.js",
   "ui": "dist/index.html",
   "networkAccess": {
-    "allowedDomains": ["https://cdn.jsdelivr.net", "https://*"],
+    "allowedDomains": ["https://cdn.jsdelivr.net"],
     "devAllowedDomains": ["http://127.0.0.1:*", "http://localhost:*"],
-    "reasoning": "Imported HTML may reference fonts and images on arbitrary domains; the default font loader fetches from the fontsource CDN."
+    "reasoning": "The default font loader fetches webfonts from the fontsource CDN (jsDelivr). Assets referenced by the imported HTML load inside the nested render iframe, which is outside this plugin-UI network scope."
   }
 }
