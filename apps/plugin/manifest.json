@@ -7,7 +7,6 @@
   "ui": "dist/index.html",
   "networkAccess": {
     "allowedDomains": ["https://cdn.jsdelivr.net"],
-    "devAllowedDomains": ["http://localhost:4599", "http://127.0.0.1:4599"],
     "reasoning": "The default font loader fetches webfonts from the fontsource CDN (jsDelivr). Assets referenced by the imported HTML load inside the nested render iframe, which is outside this plugin-UI network scope."
   }
 }
